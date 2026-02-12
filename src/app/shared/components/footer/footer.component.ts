@@ -32,15 +32,15 @@ import { LucideAngularModule, Heart } from 'lucide-angular';
           <div class="footer-col">
             <h4>Légal</h4>
             <ul>
-              <li><a>Conditions d'Utilisation</a></li>
-              <li><a>Politique de Confidentialité</a></li>
-              <li><a>Cookies</a></li>
+              <li><a routerLink="/terms">Conditions d'Utilisation</a></li>
+              <li><a routerLink="/privacy">Politique de Confidentialité</a></li>
+              <!-- <li><a>Cookies</a></li> -->
             </ul>
           </div>
         </div>
         
         <div class="footer-bottom">
-          <p>Fait avec ❤️ pour la Saint-Valentin 2026. © Valentine Games Platform.</p>
+          <p>Fait avec ❤️ pour la Saint-Valentin 2026. © Valentine Games By Eslojo Deranot.</p>
         </div>
       </div>
     </footer>
@@ -51,6 +51,7 @@ import { LucideAngularModule, Heart } from 'lucide-angular';
       background: #1a0a19;
       color: rgba(255, 255, 255, 0.6);
       position: relative;
+      z-index: 100; /* Ensure footer is above particles */
       overflow: hidden;
 
       &::before {
@@ -124,6 +125,9 @@ import { LucideAngularModule, Heart } from 'lucide-angular';
           font-size: 0.95rem;
           transition: all 0.3s ease;
           display: inline-block;
+          cursor: pointer;
+          position: relative;
+          z-index: 101;
 
           &:hover {
             color: #FF6B9D;
