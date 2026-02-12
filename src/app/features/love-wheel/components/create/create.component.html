@@ -1,0 +1,112 @@
+<div class="love-wheel-create">
+    <div class="container fade-in">
+        <div class="header">
+            <h1>🎡 Roue de <span class="text-neon">l'Amour</span></h1>
+            <p>Créez un jeu de défis et de surprises pour votre moitié. Un tour de roue, un instant de magie.</p>
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-glass">
+            <!-- Error Message -->
+            <div *ngIf="error" class="error-message">
+                {{ error }}
+            </div>
+
+            <!-- General Settings -->
+            <div class="settings-grid">
+                <div class="form-group">
+                    <label for="maxSpins">Lancers par jour ❤️</label>
+                    <input id="maxSpins" type="number" formControlName="maxSpinsPerDay" min="1" max="100"
+                        class="input" />
+                    <small class="hint">Combien de fois la roue peut être tournée chaque jour ?</small>
+                </div>
+            </div>
+
+            <!-- Sections Management -->
+            <div class="sections-container">
+                <div class="sections-header">
+                    <h2>🎯 Vos Gages & Surprises</h2>
+                    <span class="count-badge">{{ sections.length }} / 12</span>
+                </div>
+
+                <div formArrayName="sections" class="sections-grid">
+                    <div *ngFor="let section of sections.controls; let i = index" class="section-card"
+                        [formGroupName]="i">
+                        <div class="card-header">
+                            <span class="section-number">#{{ i + 1 }}</span>
+                            <button type="button" (click)="removeSection(i)" class="btn-remove"
+                                *ngIf="sections.length > 6" title="Supprimer cette section">
+                                ✕
+                            </button>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Libellé</label>
+                                    <input type="text" formControlName="text" placeholder="Ex: Un bisou magique"
+                                        maxlength="20" class="input" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Icône</label>
+                                    <select formControlName="icon" class="select">
+                                        <option value="">Aucune</option>
+                                        <option *ngFor="let icon of ICONS" [value]="icon">
+                                            {{ icon }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Description (Optionnelle)</label>
+                                <textarea formControlName="description" placeholder="Détails sur ce défi..." rows="2"
+                                    class="textarea"></textarea>
+                            </div>
+
+                            <div class="form-row mini">
+                                <div class="form-group">
+                                    <label>Couleur</label>
+                                    <div class="color-picker-wrapper">
+                                        <input type="color" formControlName="color" class="color-dot" />
+                                        <span class="hex-code">{{ section.get('color')?.value }}</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Poids (Rare ?)</label>
+                                    <input type="number" formControlName="probabilityWeight" min="1" max="100"
+                                        class="input" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" (click)="addSection()" class="btn-add" *ngIf="sections.length < 12">
+                    <span>+ Ajouter une option</span>
+                </button>
+            </div>
+
+            <!-- Preview Section -->
+            <div class="preview-section">
+                <div class="preview-glow"></div>
+                <h3>Aperçu de la Roue</h3>
+                <div class="canvas-wrapper">
+                    <app-love-wheel-canvas [sections]="sections.value" [size]="280"></app-love-wheel-canvas>
+                </div>
+            </div>
+
+            <!-- Submit Section -->
+            <div class="form-actions">
+                <button type="submit" class="btn-submit" [disabled]="!form.valid || isLoading">
+                    <span *ngIf="!isLoading">✨ Sceller la Roue</span>
+                    <div *ngIf="isLoading" class="loading-spinner"></div>
+                    <span *ngIf="isLoading">Création...</span>
+                </button>
+            </div>
+        </form>
+
+        <!-- Share Modal -->
+        <app-share-modal [isOpen]="isShareModalOpen" [shareUrl]="shareUrl" (close)="closeShareModal()">
+        </app-share-modal>
+    </div>
+</div>

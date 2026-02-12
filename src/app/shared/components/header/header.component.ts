@@ -43,11 +43,11 @@ import { filter } from 'rxjs/operators';
           <a routerLink="/treasure-hunt" class="nav-link" routerLinkActive="active">
             <span>Parcours</span>
             <div class="underline"></div>
-          </a>
-          <a routerLink="/love-wheel" class="nav-link" routerLinkActive="active">
+          </a> -->
+          <a routerLink="/love-wheel/create" class="nav-link" routerLinkActive="active">
             <span>Roue</span>
             <div class="underline"></div>
-          </a> -->
+          </a>
         </nav>
 
         <!-- Actions -->
@@ -58,7 +58,9 @@ import { filter } from 'rxjs/operators';
             Créer ma surprise
             <lucide-icon [name]="Sparkles" class="mini-icon"></lucide-icon>
           </a>
-          <button class="menu-toggle mobile-only" (click)="toggleMenu()">
+          <button class="menu-toggle mobile-only" 
+            [class.menu-open]="isMenuOpen" 
+            (click)="toggleMenu()">
             <lucide-icon [name]="isMenuOpen ? X : Menu"></lucide-icon>
           </button>
         </div>
@@ -247,6 +249,13 @@ import { filter } from 'rxjs/operators';
       display: flex;
       align-items: center;
       justify-content: center;
+      position: relative;
+      z-index: 1002;
+      transition: color 0.3s ease;
+
+      &.menu-open {
+        color: #2D132C; /* Dark color for white menu background */
+      }
     }
 
     // --- Mobile Menu ---
