@@ -81,7 +81,7 @@ export class SecretMessageService {
   /**
    * Retrieve and decrypt a secret message
    */
-  async getMessage(id: string, key: string): Promise<{ message: string; currentViews: number; maxViews: number }> {
+  async getMessage(id: string, key: string): Promise<{ message: string; currentViews: number; maxViews: number; backgroundImage: string | null }> {
     console.log(`📡 Fetching message ${id} from API...`);
     const response = await firstValueFrom(this.api.get<SecretMessageContent>(
       `/secret-messages/${id}`
@@ -100,7 +100,8 @@ export class SecretMessageService {
     return {
       message: decryptedMessage,
       currentViews: response.currentViews,
-      maxViews: response.maxViews
+      maxViews: response.maxViews,
+      backgroundImage: response.backgroundImage
     };
   }
 
