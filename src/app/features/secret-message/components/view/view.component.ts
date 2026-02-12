@@ -1,5 +1,6 @@
-import { Component, OnInit, inject, PLATFORM_ID, ChangeDetectorRef, signal, NgZone } from '@angular/core';
+import { Component, OnInit, inject, PLATFORM_ID, ChangeDetectorRef, signal, NgZone, computed } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SecretMessageService } from '../../services/secret-message.service';
 import { AnalyticsService } from '../../../../core/services/analytics.service';
@@ -23,6 +24,14 @@ export class SecretMessageViewComponent implements OnInit {
   loading = signal(true);
   error = signal<string | null>(null);
   revealed = signal(false);
+  backgroundImage = signal<string | null>(null);
+
+  private sanitizer = inject(DomSanitizer);
+
+  sanitizedMessage = computed(() => {
+    const raw = this.message();
+    return raw ? this.sanitizer.bypassSecurityTrustHtml(raw) : null;
+  });
 
   private toastService = inject(ToastService);
   private platformId = inject(PLATFORM_ID);
@@ -85,6 +94,7 @@ export class SecretMessageViewComponent implements OnInit {
         this.message.set(result.message);
         this.currentViews.set(result.currentViews);
         this.maxViews.set(result.maxViews);
+        this.backgroundImage.set(result.backgroundImage);
         console.log('📊 Signal values updated');
       });
 
@@ -121,16 +131,20 @@ export class SecretMessageViewComponent implements OnInit {
     const container = document.querySelector('.message-container');
     if (!container) return;
 
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 30; i++) {
       const heart = document.createElement('div');
       heart.className = 'floating-heart';
-      heart.textContent = '❤️';
-      heart.style.left = Math.random() * 100 + '%';
-      heart.style.animationDelay = Math.random() * 0.5 + 's';
-      container.appendChild(heart);
+      heart.textContent = ['❤️', '💖', '💘', '✨', '🌸'][Math.floor(Math.random() * 5)];
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.bottom = '-5vh';
+      heart.style.fontSize = (Math.random() * 2 + 1) + 'rem';
+      heart.style.animationDelay = Math.random() * 2 + 's';
+      heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+      heart.style.opacity = '0';
+      document.body.appendChild(heart);
 
       // Remove after animation
-      setTimeout(() => heart.remove(), 3000);
+      setTimeout(() => heart.remove(), 5000);
     }
   }
 

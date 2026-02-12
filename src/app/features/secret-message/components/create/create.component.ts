@@ -6,11 +6,12 @@ import { SecretMessageService } from '../../services/secret-message.service';
 import { AnalyticsService } from '../../../../core/services/analytics.service';
 import { ToastService } from '../../../../core/services/toast.service';
 import { ShareModalComponent } from '../../../../shared/components/share-modal/share-modal.component';
+import { RichTextEditorComponent } from '../../../../shared/components/rich-text-editor/rich-text-editor.component';
 
 @Component({
   selector: 'app-secret-message-create',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, ShareModalComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, ShareModalComponent, RichTextEditorComponent],
   templateUrl: './create.component.html',
   styleUrls: ['./create.component.scss']
 })
@@ -20,6 +21,7 @@ export class SecretMessageCreateComponent implements OnInit {
   error: string | null = null;
   shareUrl: string | null = null;
   showShareModal = false;
+  imagePreview: string | null = null;
 
   expirationOptions = [
     { value: null, label: 'Pas d\'expiration' },
@@ -137,5 +139,28 @@ export class SecretMessageCreateComponent implements OnInit {
 
   get expiration() {
     return this.form.get('expiration');
+  }
+
+  onFileSelected(event: any): void {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        this.toastService.error('L\'image est trop lourde (max 2Mo)');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64String = reader.result as string;
+        this.imagePreview = base64String;
+        this.form.patchValue({ backgroundImage: base64String });
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  removeImage(): void {
+    this.imagePreview = null;
+    this.form.patchValue({ backgroundImage: '' });
   }
 }

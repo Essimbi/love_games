@@ -1,11 +1,11 @@
 <div class="secret-message-create">
   <div class="container">
     <div class="header">
-      <h1>💌 Message Crypté Secret</h1>
-      <p>Créez un message personnel chiffré pour votre partenaire</p>
+      <h1>💌 Message <span class="text-neon">Crypté</span></h1>
+      <p>Laissez une trace invisible que seule votre moitié pourra découvrir... Un secret bien gardé.</p>
     </div>
 
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-glass">
       <!-- Error Message -->
       <div *ngIf="error" class="error-message">
         {{ error }}
@@ -13,85 +13,83 @@
 
       <!-- Message Input -->
       <div class="form-group">
-        <label for="message">Votre Message ❤️</label>
-        <textarea
-          id="message"
-          formControlName="message"
-          placeholder="Écrivez votre message personnel..."
-          rows="6"
-          class="textarea"
-          [class.error]="message?.invalid && message?.touched"
-        ></textarea>
+        <label for="message">Votre Secret ❤️</label>
+        <div class="textarea-wrapper">
+          <app-rich-text-editor formControlName="message"
+            [class.error]="message?.invalid && message?.touched"></app-rich-text-editor>
+          <div class="char-count">
+            {{ (message?.value || '').length }} / 5000
+          </div>
+        </div>
         <div *ngIf="message?.invalid && message?.touched" class="error-text">
-          <span *ngIf="message?.errors?.['required']">Le message est requis</span>
-          <span *ngIf="message?.errors?.['minlength']">Le message doit contenir au moins 1 caractère</span>
-          <span *ngIf="message?.errors?.['maxlength']">Le message ne peut pas dépasser 5000 caractères</span>
-        </div>
-        <div class="char-count">
-          {{ message?.value?.length || 0 }} / 5000
+          <span *ngIf="message?.errors?.['required']">Votre secret ne peut pas être vide...</span>
+          <span *ngIf="message?.errors?.['maxlength']">Votre secret est trop long (max 5000).</span>
         </div>
       </div>
 
-      <!-- Max Views -->
-      <div class="form-group">
-        <label for="maxViews">Nombre de lectures autorisées</label>
-        <select
-          id="maxViews"
-          formControlName="maxViews"
-          class="select"
-          [class.error]="maxViews?.invalid && maxViews?.touched"
-        >
-          <option value="1">1 lecture</option>
-          <option value="2">2 lectures</option>
-          <option value="3">3 lectures</option>
-          <option value="4">4 lectures</option>
-          <option value="5">5 lectures</option>
-        </select>
-      </div>
+      <div class="row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+        <!-- Max Views -->
+        <div class="form-group">
+          <label for="maxViews">Lectures Éphémères</label>
+          <select id="maxViews" formControlName="maxViews" class="select"
+            [class.error]="maxViews?.invalid && maxViews?.touched">
+            <option value="1">1 seule fois (Magique)</option>
+            <option value="2">2 lectures</option>
+            <option value="3">3 lectures</option>
+            <option value="5">5 lectures (Max)</option>
+          </select>
+        </div>
 
-      <!-- Expiration -->
-      <div class="form-group">
-        <label for="expiration">Expiration du message</label>
-        <select
-          id="expiration"
-          formControlName="expiration"
-          class="select"
-        >
-          <option *ngFor="let opt of expirationOptions" [value]="opt.value">
-            {{ opt.label }}
-          </option>
-        </select>
+        <!-- Expiration -->
+        <div class="form-group">
+          <label for="expiration">Durée de Vie</label>
+          <select id="expiration" formControlName="expiration" class="select">
+            <option *ngFor="let opt of expirationOptions" [value]="opt.value">
+              {{ opt.label }}
+            </option>
+          </select>
+        </div>
       </div>
 
       <!-- Background Image -->
       <div class="form-group">
-        <label for="backgroundImage">Image de fond (optionnel)</label>
-        <input
-          id="backgroundImage"
-          type="url"
-          formControlName="backgroundImage"
-          placeholder="https://example.com/image.jpg"
-          class="input"
-        />
+        <label>Ambiance visuelle ❤️</label>
+
+        <div class="image-upload-grid">
+          <!-- Preview Box -->
+          <div class="image-preview-box" *ngIf="imagePreview">
+            <img [src]="imagePreview" alt="Preview">
+            <button type="button" class="btn-remove-img" (click)="removeImage()">✕</button>
+          </div>
+
+          <!-- Upload Dropzone -->
+          <div class="upload-dropzone" [class.full-width]="!imagePreview">
+            <input type="file" id="imageUpload" (change)="onFileSelected($event)" accept="image/*" class="file-input" />
+            <label for="imageUpload" class="upload-label">
+              <span class="upload-icon">📸</span>
+              <span class="upload-text">{{ imagePreview ? 'Changer l\'image' : 'Importer une image locale' }}</span>
+              <span class="upload-hint">JPG, PNG (Max 2Mo)</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="url-fallback" *ngIf="!imagePreview">
+          <p class="separator"><span>ou utiliser un lien</span></p>
+          <input id="backgroundImage" type="url" formControlName="backgroundImage"
+            placeholder="Lien d'une image (https://...)" class="input" />
+        </div>
       </div>
 
       <!-- Submit Button -->
-      <button
-        type="submit"
-        class="btn btn-primary"
-        [disabled]="loading || form.invalid"
-      >
-        <span *ngIf="!loading">✨ Créer le Message Crypté</span>
-        <span *ngIf="loading">⏳ Création en cours...</span>
+      <button type="submit" class="btn-submit" [disabled]="loading || form.invalid">
+        <span *ngIf="!loading">✨ Sceller le Secret</span>
+        <div *ngIf="loading" class="loading-spinner"></div>
+        <span *ngIf="loading">Chiffrement...</span>
       </button>
     </form>
   </div>
 
   <!-- Share Modal -->
-  <app-share-modal
-    *ngIf="showShareModal"
-    [shareUrl]="shareUrl || ''"
-    [isOpen]="showShareModal"
-    (close)="closeShareModal()"
-  ></app-share-modal>
+  <app-share-modal *ngIf="showShareModal" [shareUrl]="shareUrl || ''" [isOpen]="showShareModal"
+    (close)="closeShareModal()"></app-share-modal>
 </div>

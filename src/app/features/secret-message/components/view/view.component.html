@@ -1,14 +1,20 @@
 <div class="secret-message-view">
+  <!-- Dynamic Background Layer -->
+  <div class="background-image-layer" *ngIf="backgroundImage()"
+    [style.backgroundImage]="'url(' + backgroundImage() + ')'">
+    <div class="background-overlay"></div>
+  </div>
+
   <!-- Loading State -->
   <div *ngIf="loading()" class="loading-container">
-    <div class="spinner"></div>
-    <p>Déchiffrement du message...</p>
+    <div class="loader-heart">❤️</div>
+    <p>Le secret est en train d'être déchiffré...</p>
   </div>
 
   <!-- Error State -->
   <div *ngIf="error() && !loading()" class="error-container">
     <div class="error-box">
-      <h2>❌ Erreur</h2>
+      <h2>❌ Inaccessible</h2>
       <p>{{ error() }}</p>
       <button class="btn btn-primary" (click)="goHome()">
         Retour à l'accueil
@@ -21,39 +27,40 @@
     <!-- Before Reveal -->
     <div *ngIf="!revealed()" class="before-reveal">
       <div class="locked-box">
-        <div class="lock-icon">🔒</div>
-        <h1>Message Crypté</h1>
-        <p>Cliquez pour révéler le message secret</p>
-        <div class="views-info">
-          <span>Lectures restantes: {{ maxViews() - currentViews() }} / {{ maxViews() }}</span>
+        <div class="heart-lock" (click)="revealMessage()">🔒❤️</div>
+        <h1>Un nouveau secret</h1>
+        <p>Touchez le cœur pour révéler ce qui vous est destiné.</p>
+
+        <div class="views-badge">
+          {{ maxViews() - currentViews() }} Lectures restantes
         </div>
-        <button class="btn btn-primary btn-large" (click)="revealMessage()">
-          ✨ Révéler le Message
-        </button>
       </div>
     </div>
 
     <!-- After Reveal -->
     <div *ngIf="revealed()" class="after-reveal">
       <div class="message-box">
-        <div class="unlock-icon">🔓</div>
-        <div class="message-content">
-          {{ message() }}
+        <div class="reveal-particles">✨💖✨</div>
+
+        <div class="message-content" [innerHTML]="sanitizedMessage()">
         </div>
+
         <div class="message-actions">
-          <button class="btn btn-secondary" (click)="copyToClipboard()">
-            📋 Copier
+          <button class="btn btn-gold" (click)="copyToClipboard()">
+            📋 Garder en mémoire
           </button>
-          <button class="btn btn-secondary" (click)="goHome()">
+          <button class="btn btn-outline" (click)="goHome()">
             🏠 Accueil
           </button>
         </div>
-        <div class="views-remaining">
+
+        <div class="cleanup-notice">
           <p *ngIf="currentViews() < maxViews()">
-            Lectures restantes: {{ maxViews() - currentViews() }} / {{ maxViews() }}
+            Il reste <span class="accent">{{ maxViews() - currentViews() }}</span> lectures avant que ce secret ne
+            s'efface à jamais.
           </p>
-          <p *ngIf="currentViews() >= maxViews()" class="last-view">
-            ⚠️ C'était la dernière lecture. Le message sera supprimé.
+          <p *ngIf="currentViews() >= maxViews()" class="accent">
+            ⚠️ Dernier regard. Ce message sera supprimé après la fermeture de cet onglet.
           </p>
         </div>
       </div>

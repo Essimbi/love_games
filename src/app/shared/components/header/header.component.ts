@@ -36,7 +36,7 @@ import { filter } from 'rxjs/operators';
             <span>Messages</span>
             <div class="underline"></div>
           </a>
-          <a routerLink="/memory" class="nav-link" routerLinkActive="active">
+          <!-- <a routerLink="/memory" class="nav-link" routerLinkActive="active">
             <span>Memory</span>
             <div class="underline"></div>
           </a>
@@ -47,7 +47,7 @@ import { filter } from 'rxjs/operators';
           <a routerLink="/love-wheel" class="nav-link" routerLinkActive="active">
             <span>Roue</span>
             <div class="underline"></div>
-          </a>
+          </a> -->
         </nav>
 
         <!-- Actions -->
