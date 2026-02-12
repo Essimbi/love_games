@@ -76,7 +76,7 @@ export class MemoryGameController {
       // Get images
       const images = db.prepare(`
         SELECT image_data FROM memory_images WHERE game_id = ? ORDER BY position
-      `).all() as any[];
+      `).all(id) as any[];
       
       res.json({
         id: game.id,

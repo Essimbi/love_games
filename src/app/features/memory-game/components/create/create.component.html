@@ -1,5 +1,5 @@
 <div class="memory-game-create">
-  <div class="container">
+  <div class="container fade-in">
     <div class="header">
       <h1>🎮 Nos Souvenirs Ensemble</h1>
       <p>Créez un jeu de memory avec vos plus belles photos</p>
@@ -14,11 +14,7 @@
       <!-- Difficulty Level -->
       <div class="form-group">
         <label for="difficultyLevel">Niveau de difficulté</label>
-        <select
-          id="difficultyLevel"
-          formControlName="difficultyLevel"
-          class="select"
-        >
+        <select id="difficultyLevel" formControlName="difficultyLevel" class="select">
           <option *ngFor="let opt of difficultyOptions" [value]="opt.value">
             {{ opt.label }}
           </option>
@@ -29,14 +25,8 @@
       <div class="form-group">
         <label>Sélectionnez vos photos</label>
         <div class="upload-area">
-          <input
-            type="file"
-            multiple
-            accept="image/*"
-            (change)="onFileSelected($event)"
-            class="file-input"
-            #fileInput
-          />
+          <input type="file" multiple accept="image/*" (change)="onFileSelected($event)" class="file-input"
+            #fileInput />
           <div class="upload-placeholder" (click)="fileInput.click()">
             <div class="upload-icon">📸</div>
             <p>Cliquez pour sélectionner des photos</p>
@@ -44,48 +34,45 @@
           </div>
         </div>
 
+        <!-- Loading Progress Bar -->
+        <div *ngIf="isLoadingImages" class="loading-progress">
+          <div class="progress-bar">
+            <div class="progress-fill" [style.width.%]="loadingProgress"></div>
+          </div>
+          <p class="progress-text">Chargement des images... {{ loadingProgress }}%</p>
+        </div>
+
         <!-- Selected Images Preview -->
-        <div *ngIf="selectedImages.length > 0" class="images-preview">
+        <div *ngIf="selectedImages.length > 0" class="images-preview" #imagesPreview>
           <div *ngFor="let img of selectedImages; let i = index" class="image-item">
             <img [src]="img.preview" [alt]="'Photo ' + (i + 1)" />
-            <button
-              type="button"
-              class="remove-btn"
-              (click)="removeImage(i)"
-              title="Supprimer"
-            >
+            <button type="button" class="remove-btn" (click)="removeImage(i)" title="Supprimer">
               ✕
             </button>
           </div>
         </div>
 
         <div class="image-count">
-          {{ selectedImages.length }} / {{ difficultyLevel?.value === 'easy' ? 4 : difficultyLevel?.value === 'medium' ? 6 : 8 }} photos
+          {{ selectedImages.length }} / {{ difficultyLevel?.value === 'easy' ? 4 : difficultyLevel?.value === 'medium' ?
+          6 : 8 }} photos
         </div>
       </div>
 
       <!-- Final Message -->
       <div class="form-group">
         <label for="finalMessage">Message final 💌</label>
-        <textarea
-          id="finalMessage"
-          formControlName="finalMessage"
-          placeholder="Écrivez le message qui s'affichera à la fin du jeu..."
-          rows="4"
-          class="textarea"
-          [class.error]="finalMessage?.invalid && finalMessage?.touched"
-        ></textarea>
-        <div *ngIf="finalMessage?.invalid && finalMessage?.touched" class="error-text">
+        <textarea id="finalMessage" formControlName="finalMessage"
+          placeholder="Écrivez le message qui s'affichera à la fin du jeu..." class="textarea"
+          [class.error]="finalMessage?.invalid && finalMessage?.touched"></textarea>
+        <!-- Custom Error Text -->
+        <div *ngIf="finalMessage?.invalid && finalMessage?.touched" class="error-text"
+          style="color: #ff6b6b; font-size: 0.9rem; margin-top: 0.5rem;">
           <span *ngIf="finalMessage?.errors?.['required']">Le message est requis</span>
         </div>
       </div>
 
       <!-- Submit Button -->
-      <button
-        type="submit"
-        class="btn btn-primary"
-        [disabled]="loading || form.invalid"
-      >
+      <button type="submit" class="btn-primary" [disabled]="loading || form.invalid">
         <span *ngIf="!loading">🎮 Créer le Jeu</span>
         <span *ngIf="loading">⏳ Création en cours...</span>
       </button>
@@ -93,10 +80,6 @@
   </div>
 
   <!-- Share Modal -->
-  <app-share-modal
-    *ngIf="showShareModal"
-    [shareUrl]="shareUrl || ''"
-    [isOpen]="showShareModal"
-    (close)="closeShareModal()"
-  ></app-share-modal>
+  <app-share-modal *ngIf="showShareModal" [shareUrl]="shareUrl || ''" [isOpen]="showShareModal"
+    (close)="closeShareModal()"></app-share-modal>
 </div>

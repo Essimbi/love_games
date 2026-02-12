@@ -4,12 +4,7 @@ import { validateRequest } from '../middleware/validation.js';
 import { z } from 'zod';
 import { isDatabaseAvailable } from '../../../server/database/db.js';
 
-const trackEventSchema = z.object({
-  eventType: z.enum(['game_created', 'game_viewed', 'game_completed', 'share_clicked']),
-  gameId: z.string().optional(),
-  gameType: z.enum(['secret-message', 'memory-game', 'treasure-hunt', 'love-wheel']).optional(),
-  metadata: z.record(z.string(), z.any()).optional()
-});
+const trackEventSchema = z.object({}).passthrough();
 
 export function setupAnalyticsRoutes(app: Express): void {
   // Track an event

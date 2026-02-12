@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -14,6 +14,8 @@ import { ShareModalComponent } from '../../../../shared/components/share-modal/s
   styleUrls: ['./create.component.scss']
 })
 export class MemoryGameCreateComponent implements OnInit {
+  @ViewChild('imagesPreview') imagesPreview!: ElementRef;
+  
   form!: FormGroup;
   loading = false;
   error: string | null = null;
@@ -21,6 +23,8 @@ export class MemoryGameCreateComponent implements OnInit {
   showShareModal = false;
   
   selectedImages: { file: File; preview: string }[] = [];
+  loadingProgress = 0;
+  isLoadingImages = false;
   
   difficultyOptions = [
     { value: 'easy', label: 'Facile (4 paires)' },
@@ -32,7 +36,9 @@ export class MemoryGameCreateComponent implements OnInit {
     private fb: FormBuilder,
     private memoryGameService: MemoryGameService,
     private analyticsService: AnalyticsService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef,
+    private ngZone: NgZone
   ) {}
   
   ngOnInit(): void {
@@ -62,6 +68,14 @@ export class MemoryGameCreateComponent implements OnInit {
       return;
     }
     
+    this.isLoadingImages = true;
+    this.loadingProgress = 0;
+    this.error = null;
+    
+    let loadedCount = 0;
+    const totalFiles = files.length;
+    const newImages: { file: File; preview: string }[] = [];
+    
     files.forEach(file => {
       if (!file.type.startsWith('image/')) {
         this.error = 'Seules les images sont acceptées';
@@ -75,15 +89,36 @@ export class MemoryGameCreateComponent implements OnInit {
       
       const reader = new FileReader();
       reader.onload = (e) => {
-        this.selectedImages.push({
+        newImages.push({
           file,
           preview: e.target?.result as string
         });
+        
+        loadedCount++;
+        this.loadingProgress = Math.round((loadedCount / totalFiles) * 100);
+        
+        if (loadedCount === totalFiles) {
+          // Add all images at once
+          this.ngZone.run(() => {
+            this.selectedImages.push(...newImages);
+            this.isLoadingImages = false;
+            this.loadingProgress = 0;
+            console.log('Affichage');
+            
+            // Force a reflow and wait for next tick
+            setTimeout(() => {
+              // Force reflow by reading offsetHeight
+              if (this.imagesPreview) {
+                const height = this.imagesPreview.nativeElement.offsetHeight;
+                console.log('Preview height:', height);
+              }
+              this.scrollToPreview();
+            }, 150);
+          });
+        }
       };
       reader.readAsDataURL(file);
     });
-    
-    this.error = null;
   }
   
   /**
@@ -91,6 +126,15 @@ export class MemoryGameCreateComponent implements OnInit {
    */
   removeImage(index: number): void {
     this.selectedImages.splice(index, 1);
+  }
+  
+  /**
+   * Scroll to images preview
+   */
+  private scrollToPreview(): void {
+    if (this.imagesPreview) {
+      this.imagesPreview.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
   
   /**

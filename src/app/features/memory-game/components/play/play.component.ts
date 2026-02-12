@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MemoryGameService } from '../../services/memory-game.service';
@@ -20,7 +20,7 @@ interface Card {
   templateUrl: './play.component.html',
   styleUrls: ['./play.component.scss']
 })
-export class MemoryGamePlayComponent implements OnInit {
+export class MemoryGamePlayComponent implements OnInit, OnDestroy {
   gameId: string | null = null;
   cards: Card[] = [];
   finalMessage: string = '';
@@ -34,6 +34,7 @@ export class MemoryGamePlayComponent implements OnInit {
   startTime: number = 0;
   elapsedTime = 0;
   timerInterval: any;
+  gameStarted = false;
   
   // Game state
   flippedCards: number[] = [];
@@ -43,7 +44,8 @@ export class MemoryGamePlayComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private memoryGameService: MemoryGameService,
-    private analyticsService: AnalyticsService
+    private analyticsService: AnalyticsService,
+    private cdr: ChangeDetectorRef
   ) {}
   
   ngOnInit(): void {
@@ -58,6 +60,10 @@ export class MemoryGamePlayComponent implements OnInit {
     this.loadGame();
   }
   
+  ngOnDestroy(): void {
+    this.stopTimer();
+  }
+  
   /**
    * Load the game
    */
@@ -67,7 +73,6 @@ export class MemoryGamePlayComponent implements OnInit {
         this.finalMessage = game.finalMessage;
         this.cards = this.memoryGameService.createCardPairs(game.images);
         this.loading = false;
-        this.startTimer();
         this.analyticsService.trackGameViewed('memory_game', this.gameId!);
       },
       error: (err) => {
@@ -82,9 +87,14 @@ export class MemoryGamePlayComponent implements OnInit {
    * Start the timer
    */
   private startTimer(): void {
+    if (this.gameStarted) return;
+    
+    this.gameStarted = true;
     this.startTime = Date.now();
+    
     this.timerInterval = setInterval(() => {
       this.elapsedTime = Math.floor((Date.now() - this.startTime) / 1000);
+      this.cdr.markForCheck();
     }, 100);
   }
   
@@ -105,6 +115,11 @@ export class MemoryGamePlayComponent implements OnInit {
     
     const card = this.cards.find(c => c.id === cardId);
     if (!card || card.flipped || card.matched) return;
+    
+    // Start timer on first card flip
+    if (!this.gameStarted) {
+      this.startTimer();
+    }
     
     card.flipped = true;
     this.flippedCards.push(cardId);
@@ -193,9 +208,9 @@ export class MemoryGamePlayComponent implements OnInit {
     this.matches = 0;
     this.elapsedTime = 0;
     this.gameCompleted = false;
+    this.gameStarted = false;
     this.flippedCards = [];
     this.canFlip = true;
-    this.startTimer();
   }
   
   /**
