@@ -1,0 +1,89 @@
+{
+  "extends": "lighthouse:default",
+  "settings": {
+    "onlyCategories": [
+      "performance",
+      "accessibility",
+      "best-practices",
+      "seo"
+    ],
+    "emulatedFormFactor": "mobile",
+    "throttling": {
+      "rttMs": 150,
+      "throughputKbps": 1638.4,
+      "cpuSlowdownMultiplier": 4,
+      "requestLatencyMs": 562.5,
+      "downloadThroughputKbps": 1474.56,
+      "uploadThroughputKbps": 750
+    },
+    "skipAudits": [
+      "uses-http2",
+      "uses-passive-event-listeners"
+    ]
+  },
+  "audits": {
+    "first-contentful-paint": {
+      "options": {
+        "scorePODRanges": [
+          {
+            "name": "fast",
+            "min": 0,
+            "max": 1800
+          },
+          {
+            "name": "average",
+            "min": 1800,
+            "max": 3000
+          },
+          {
+            "name": "slow",
+            "min": 3000,
+            "max": 10000
+          }
+        ]
+      }
+    },
+    "largest-contentful-paint": {
+      "options": {
+        "scorePODRanges": [
+          {
+            "name": "fast",
+            "min": 0,
+            "max": 2500
+          },
+          {
+            "name": "average",
+            "min": 2500,
+            "max": 4000
+          },
+          {
+            "name": "slow",
+            "min": 4000,
+            "max": 10000
+          }
+        ]
+      }
+    },
+    "cumulative-layout-shift": {
+      "options": {
+        "scorePODRanges": [
+          {
+            "name": "good",
+            "min": 0,
+            "max": 0.1
+          },
+          {
+            "name": "needs-improvement",
+            "min": 0.1,
+            "max": 0.25
+          },
+          {
+            "name": "poor",
+            "min": 0.25,
+            "max": 1
+          }
+        ]
+      }
+    }
+  }
+}

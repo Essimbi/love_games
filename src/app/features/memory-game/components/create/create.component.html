@@ -1,0 +1,102 @@
+<div class="memory-game-create">
+  <div class="container">
+    <div class="header">
+      <h1>🎮 Nos Souvenirs Ensemble</h1>
+      <p>Créez un jeu de memory avec vos plus belles photos</p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form">
+      <!-- Error Message -->
+      <div *ngIf="error" class="error-message">
+        {{ error }}
+      </div>
+
+      <!-- Difficulty Level -->
+      <div class="form-group">
+        <label for="difficultyLevel">Niveau de difficulté</label>
+        <select
+          id="difficultyLevel"
+          formControlName="difficultyLevel"
+          class="select"
+        >
+          <option *ngFor="let opt of difficultyOptions" [value]="opt.value">
+            {{ opt.label }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Image Upload -->
+      <div class="form-group">
+        <label>Sélectionnez vos photos</label>
+        <div class="upload-area">
+          <input
+            type="file"
+            multiple
+            accept="image/*"
+            (change)="onFileSelected($event)"
+            class="file-input"
+            #fileInput
+          />
+          <div class="upload-placeholder" (click)="fileInput.click()">
+            <div class="upload-icon">📸</div>
+            <p>Cliquez pour sélectionner des photos</p>
+            <small>JPG, PNG - Max 5MB par photo</small>
+          </div>
+        </div>
+
+        <!-- Selected Images Preview -->
+        <div *ngIf="selectedImages.length > 0" class="images-preview">
+          <div *ngFor="let img of selectedImages; let i = index" class="image-item">
+            <img [src]="img.preview" [alt]="'Photo ' + (i + 1)" />
+            <button
+              type="button"
+              class="remove-btn"
+              (click)="removeImage(i)"
+              title="Supprimer"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+
+        <div class="image-count">
+          {{ selectedImages.length }} / {{ difficultyLevel?.value === 'easy' ? 4 : difficultyLevel?.value === 'medium' ? 6 : 8 }} photos
+        </div>
+      </div>
+
+      <!-- Final Message -->
+      <div class="form-group">
+        <label for="finalMessage">Message final 💌</label>
+        <textarea
+          id="finalMessage"
+          formControlName="finalMessage"
+          placeholder="Écrivez le message qui s'affichera à la fin du jeu..."
+          rows="4"
+          class="textarea"
+          [class.error]="finalMessage?.invalid && finalMessage?.touched"
+        ></textarea>
+        <div *ngIf="finalMessage?.invalid && finalMessage?.touched" class="error-text">
+          <span *ngIf="finalMessage?.errors?.['required']">Le message est requis</span>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="loading || form.invalid"
+      >
+        <span *ngIf="!loading">🎮 Créer le Jeu</span>
+        <span *ngIf="loading">⏳ Création en cours...</span>
+      </button>
+    </form>
+  </div>
+
+  <!-- Share Modal -->
+  <app-share-modal
+    *ngIf="showShareModal"
+    [shareUrl]="shareUrl || ''"
+    [isOpen]="showShareModal"
+    (close)="closeShareModal()"
+  ></app-share-modal>
+</div>

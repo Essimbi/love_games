@@ -1,0 +1,163 @@
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { trigger, transition, style, animate } from '@angular/animations';
+
+export type ToastType = 'success' | 'error' | 'info' | 'warning';
+
+@Component({
+  selector: 'app-toast',
+  standalone: true,
+  imports: [CommonModule],
+  template: `
+    <div
+      *ngIf="visible"
+      class="toast"
+      [class]="'toast-' + type"
+      [@slideIn]
+    >
+      <div class="toast-content">
+        <span class="toast-icon">{{ icon }}</span>
+        <span class="toast-message">{{ message }}</span>
+      </div>
+      <button
+        type="button"
+        class="toast-close"
+        (click)="close()"
+      >
+        ✕
+      </button>
+    </div>
+  `,
+  styles: [`
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      padding: 1rem 1.5rem;
+      border-radius: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      min-width: 300px;
+      max-width: 500px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 2000;
+      font-weight: 500;
+    }
+
+    .toast-content {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex: 1;
+    }
+
+    .toast-icon {
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .toast-message {
+      line-height: 1.4;
+    }
+
+    .toast-close {
+      background: none;
+      border: none;
+      color: inherit;
+      cursor: pointer;
+      font-size: 1.2rem;
+      padding: 0;
+      flex-shrink: 0;
+      opacity: 0.7;
+      transition: opacity 0.3s;
+    }
+
+    .toast-close:hover {
+      opacity: 1;
+    }
+
+    .toast-success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .toast-error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .toast-info {
+      background: #d1ecf1;
+      color: #0c5460;
+      border: 1px solid #bee5eb;
+    }
+
+    .toast-warning {
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeaa7;
+    }
+
+    @media (max-width: 600px) {
+      .toast {
+        bottom: 1rem;
+        right: 1rem;
+        left: 1rem;
+        min-width: auto;
+        max-width: none;
+      }
+    }
+  `],
+  animations: [
+    trigger('slideIn', [
+      transition(':enter', [
+        style({ transform: 'translateX(400px)', opacity: 0 }),
+        animate('300ms ease-out', style({ transform: 'translateX(0)', opacity: 1 }))
+      ]),
+      transition(':leave', [
+        animate('300ms ease-in', style({ transform: 'translateX(400px)', opacity: 0 }))
+      ])
+    ])
+  ]
+})
+export class ToastComponent implements OnInit {
+  @Input() message = '';
+  @Input() type: ToastType = 'info';
+  @Input() duration = 3000;
+  @Output() closed = new EventEmitter<void>();
+
+  visible = true;
+  private timeout: any;
+  icon = 'ℹ';
+
+  ngOnInit(): void {
+    this.icon = this.getIcon();
+    if (this.duration > 0) {
+      this.timeout = setTimeout(() => this.close(), this.duration);
+    }
+  }
+
+  close(): void {
+    this.visible = false;
+    clearTimeout(this.timeout);
+    setTimeout(() => this.closed.emit(), 300);
+  }
+
+  private getIcon(): string {
+    switch (this.type) {
+      case 'success':
+        return '✓';
+      case 'error':
+        return '✕';
+      case 'warning':
+        return '⚠';
+      case 'info':
+      default:
+        return 'ℹ';
+    }
+  }
+}

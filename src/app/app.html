@@ -1,0 +1,16 @@
+<app-header></app-header>
+<main class="main-content">
+  <router-outlet />
+</main>
+<app-footer></app-footer>
+
+<!-- Global Toasts -->
+<div class="toast-container">
+  <app-toast
+    *ngFor="let toast of toasts$ | async"
+    [message]="toast.message"
+    [type]="toast.type"
+    [duration]="toast.duration"
+    (closed)="removeToast(toast.id)"
+  ></app-toast>
+</div>

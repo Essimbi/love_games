@@ -1,0 +1,54 @@
+<div class="modal-overlay" *ngIf="isOpen" (click)="onBackdropClick($event)">
+  <div class="modal-content">
+    <button class="close-btn" (click)="closeModal()">✕</button>
+    
+    <h2>Partagez votre jeu ❤️</h2>
+    
+    <!-- Share Link -->
+    <div class="share-section">
+      <h3>Lien de partage</h3>
+      <div class="share-link">
+        <input 
+          type="text" 
+          [value]="shareUrl" 
+          readonly 
+          class="link-input"
+        />
+        <button class="btn btn-copy" (click)="copyLink()">
+          <span *ngIf="!copySuccess">📋 Copier</span>
+          <span *ngIf="copySuccess">✓ Copié !</span>
+        </button>
+      </div>
+    </div>
+    
+    <!-- QR Code -->
+    <div class="share-section">
+      <h3>Code QR</h3>
+      <div class="qr-code-container">
+        <canvas #qrCanvas></canvas>
+        <p>Scannez avec votre smartphone</p>
+      </div>
+    </div>
+    
+    <!-- Social Share -->
+    <div class="share-section">
+      <h3>Partager sur les réseaux</h3>
+      <div class="social-buttons">
+        <button class="btn btn-social btn-whatsapp" (click)="shareViaWhatsApp()">
+          💬 WhatsApp
+        </button>
+        <button class="btn btn-social btn-messenger" (click)="shareViaMessenger()">
+          👥 Messenger
+        </button>
+        <button class="btn btn-social btn-email" (click)="shareViaEmail()">
+          ✉️ Email
+        </button>
+      </div>
+    </div>
+    
+    <!-- Close Button -->
+    <button class="btn btn-primary btn-full" (click)="closeModal()">
+      Fermer
+    </button>
+  </div>
+</div>

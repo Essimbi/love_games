@@ -1,0 +1,97 @@
+<div class="secret-message-create">
+  <div class="container">
+    <div class="header">
+      <h1>💌 Message Crypté Secret</h1>
+      <p>Créez un message personnel chiffré pour votre partenaire</p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form">
+      <!-- Error Message -->
+      <div *ngIf="error" class="error-message">
+        {{ error }}
+      </div>
+
+      <!-- Message Input -->
+      <div class="form-group">
+        <label for="message">Votre Message ❤️</label>
+        <textarea
+          id="message"
+          formControlName="message"
+          placeholder="Écrivez votre message personnel..."
+          rows="6"
+          class="textarea"
+          [class.error]="message?.invalid && message?.touched"
+        ></textarea>
+        <div *ngIf="message?.invalid && message?.touched" class="error-text">
+          <span *ngIf="message?.errors?.['required']">Le message est requis</span>
+          <span *ngIf="message?.errors?.['minlength']">Le message doit contenir au moins 1 caractère</span>
+          <span *ngIf="message?.errors?.['maxlength']">Le message ne peut pas dépasser 5000 caractères</span>
+        </div>
+        <div class="char-count">
+          {{ message?.value?.length || 0 }} / 5000
+        </div>
+      </div>
+
+      <!-- Max Views -->
+      <div class="form-group">
+        <label for="maxViews">Nombre de lectures autorisées</label>
+        <select
+          id="maxViews"
+          formControlName="maxViews"
+          class="select"
+          [class.error]="maxViews?.invalid && maxViews?.touched"
+        >
+          <option value="1">1 lecture</option>
+          <option value="2">2 lectures</option>
+          <option value="3">3 lectures</option>
+          <option value="4">4 lectures</option>
+          <option value="5">5 lectures</option>
+        </select>
+      </div>
+
+      <!-- Expiration -->
+      <div class="form-group">
+        <label for="expiration">Expiration du message</label>
+        <select
+          id="expiration"
+          formControlName="expiration"
+          class="select"
+        >
+          <option *ngFor="let opt of expirationOptions" [value]="opt.value">
+            {{ opt.label }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Background Image -->
+      <div class="form-group">
+        <label for="backgroundImage">Image de fond (optionnel)</label>
+        <input
+          id="backgroundImage"
+          type="url"
+          formControlName="backgroundImage"
+          placeholder="https://example.com/image.jpg"
+          class="input"
+        />
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="loading || form.invalid"
+      >
+        <span *ngIf="!loading">✨ Créer le Message Crypté</span>
+        <span *ngIf="loading">⏳ Création en cours...</span>
+      </button>
+    </form>
+  </div>
+
+  <!-- Share Modal -->
+  <app-share-modal
+    *ngIf="showShareModal"
+    [shareUrl]="shareUrl || ''"
+    [isOpen]="showShareModal"
+    (close)="closeShareModal()"
+  ></app-share-modal>
+</div>

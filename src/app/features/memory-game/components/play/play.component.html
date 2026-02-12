@@ -1,0 +1,72 @@
+<div class="memory-game-play">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Chargement du jeu...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="error-container">
+    <div class="error-box">
+      <h2>❌ Erreur</h2>
+      <p>{{ error }}</p>
+      <button class="btn btn-primary" (click)="goHome()">
+        Retour à l'accueil
+      </button>
+    </div>
+  </div>
+
+  <!-- Game Container -->
+  <div *ngIf="!loading && !error" class="game-container">
+    <!-- Header -->
+    <div class="game-header">
+      <h1>🎮 Nos Souvenirs Ensemble</h1>
+      <div class="game-stats">
+        <div class="stat">
+          <span class="label">Temps</span>
+          <span class="value">{{ formatTime(elapsedTime) }}</span>
+        </div>
+        <div class="stat">
+          <span class="label">Coups</span>
+          <span class="value">{{ moves }}</span>
+        </div>
+        <div class="stat">
+          <span class="label">Paires</span>
+          <span class="value">{{ matches }} / {{ cards.length / 2 }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game Board -->
+    <div *ngIf="!gameCompleted" class="game-board">
+      <div class="cards-grid">
+        <app-memory-card
+          *ngFor="let card of cards"
+          [card]="card"
+          (cardFlipped)="onCardFlipped($event)"
+        ></app-memory-card>
+      </div>
+    </div>
+
+    <!-- Completion Screen -->
+    <div *ngIf="gameCompleted" class="completion-screen">
+      <div class="completion-box">
+        <div class="completion-icon">🎉</div>
+        <h2>Bravo !</h2>
+        <p class="final-message">{{ finalMessage }}</p>
+        <div class="final-stats">
+          <p>Temps: {{ formatTime(elapsedTime) }}</p>
+          <p>Coups: {{ moves }}</p>
+        </div>
+        <div class="completion-actions">
+          <button class="btn btn-primary" (click)="restartGame()">
+            🔄 Rejouer
+          </button>
+          <button class="btn btn-secondary" (click)="goHome()">
+            🏠 Accueil
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

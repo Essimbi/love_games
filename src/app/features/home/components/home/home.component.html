@@ -1,0 +1,250 @@
+<div class="home-landing">
+    <!-- 1. HERO SECTION -->
+    <section class="hero scroll-reveal">
+        <!-- Premium Backgrounds -->
+        <div class="mesh-gradient"></div>
+        <canvas #heroCanvas class="hero-canvas"></canvas>
+
+        <div class="hero-content">
+            <div class="badge fade-in">
+                <lucide-icon [name]="Icons.Sparkles" class="icon-sparkle"></lucide-icon>
+                <span>L'amour mérite une surprise unique</span>
+            </div>
+
+            <h1 class="hero-title fade-in-up">
+                <span class="light">Créez une</span> surprise <br>
+                <span class="gradient-text">inoubliable</span>
+                <span class="light">pour votre</span>
+                <span class="gold-text">Saint-Valentin</span>
+            </h1>
+
+            <p class="hero-subtitle fade-in-up delay-1">
+                Parce que les moments précieux méritent plus qu'un simple message.
+                Plongez dans un univers romantique et ludique.
+            </p>
+
+            <div class="hero-actions fade-in-up delay-2">
+                <button routerLink="/secret-message/create" class="btn btn-primary btn-liquid">
+                    <span class="btn-text">Créer ma surprise ❤️</span>
+                    <div class="liquid"></div>
+                </button>
+            </div>
+
+            <!-- Enhanced Trust Badge -->
+            <div class="hero-trust fade-in-up delay-3">
+                <div class="trust-badge">
+                    <div class="avatars">
+                        <div class="avatar" style="background-image: url('https://i.pravatar.cc/100?u=1')"></div>
+                        <div class="avatar" style="background-image: url('https://i.pravatar.cc/100?u=2')"></div>
+                        <div class="avatar" style="background-image: url('https://i.pravatar.cc/100?u=3')"></div>
+                        <div class="avatar-plus">+{{ surprisesCreated - 3 }}</div>
+                    </div>
+                    <div class="trust-text">
+                        <strong>{{ surprisesCreated | number }} surprises</strong>
+                        <span>créées aujourd'hui • <span class="pulse-dot"></span> Direct</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="scroll-indicator">
+                <div class="mouse">
+                    <div class="wheel"></div>
+                </div>
+                <span>Découvrir</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. LES JEUX SECTION -->
+    <section id="games" class="games-section scroll-reveal">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Choisissez votre <span class="text-primary">expérience</span></h2>
+                <p>4 façons uniques de célébrer votre complicité</p>
+            </div>
+
+            <div class="games-grid">
+                <div *ngFor="let game of games" class="game-card" [style.border-color]="game.color + '40'">
+                    <div class="card-image-wrapper">
+                        <img [src]="game.image" [alt]="game.title" class="card-img">
+                        <div class="img-overlay"></div>
+                    </div>
+                    <div class="card-glass">
+                        <div class="card-badge">{{ game.tag }}</div>
+                        <div class="card-icon-wrapper" [style.background-color]="game.color + '15'">
+                            <lucide-icon [name]="game.icon" [style.color]="game.color" class="main-icon"></lucide-icon>
+                        </div>
+                        <h3>{{ game.title }}</h3>
+                        <p class="card-desc">{{ game.description }}</p>
+
+                        <div class="card-meta">
+                            <span class="duration">
+                                <lucide-icon [name]="Icons.Clock" class="tiny-icon"></lucide-icon>
+                                {{ game.duration }}
+                            </span>
+                        </div>
+
+                        <a [routerLink]="game.route" class="btn-link">
+                            <span>Découvrir</span>
+                            <lucide-icon [name]="Icons.ArrowRight" class="arrow"></lucide-icon>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. COMMENT ÇA MARCHE -->
+    <section class="how-it-works scroll-reveal">
+        <div class="container">
+            <div class="section-header">
+                <h2>Simple comme <span class="text-primary">1, 2, 3</span></h2>
+            </div>
+
+            <div class="timeline-container">
+                <div class="timeline-line">
+                    <div class="line-progress"></div>
+                </div>
+
+                <div class="steps-grid">
+                    <div *ngFor="let step of steps; let i = index" class="step-item">
+                        <div class="step-icon-box">
+                            <lucide-icon [name]="step.icon" class="step-icon"></lucide-icon>
+                            <div class="step-number">{{ i + 1 }}</div>
+                        </div>
+                        <h3>{{ step.title }}</h3>
+                        <p>{{ step.description }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. POURQUOI NOUS -->
+    <section class="why-us scroll-reveal">
+        <div class="watermark-hearts"></div>
+        <div class="container">
+            <div class="section-header">
+                <h2>L'amour mérite <span class="text-primary">le meilleur</span></h2>
+                <p>Une plateforme pensée pour vos moments les plus précieux</p>
+            </div>
+
+            <div class="features-grid">
+                <div *ngFor="let feature of features" class="feature-card">
+                    <div class="feature-badge">{{ feature.badge }}</div>
+                    <div class="feature-icon-box">
+                        <lucide-icon [name]="feature.icon" class="feature-icon"></lucide-icon>
+                    </div>
+                    <h3>{{ feature.title }}</h3>
+                    <p>{{ feature.description }}</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. GALERIE INTERACTIVE -->
+    <section class="gallery-section scroll-reveal">
+        <div class="container">
+            <div class="section-header">
+                <h2>Inspirez-<span class="text-primary">vous</span></h2>
+            </div>
+
+            <div class="gallery-container">
+                <div class="gallery-slide" *ngFor="let img of galleryImages; let i = index"
+                    [class.active]="activeGalleryIndex === i">
+                    <img [src]="img.url" [alt]="img.title" class="gallery-img">
+                    <div class="gallery-overlay">
+                        <div class="parallax-content">
+                            <lucide-icon [name]="Icons.Sparkles" class="glam-icon"></lucide-icon>
+                            <h3>{{ img.title }}</h3>
+                            <p>Des <span class="highlight">surprises immersives</span> qui font vibrer les cœurs au
+                                milieu de la nuit.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gallery-dots">
+                    <span *ngFor="let img of galleryImages; let i = index" class="dot"
+                        [class.active]="activeGalleryIndex === i" (click)="activeGalleryIndex = i"></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. SOCIAL PROOF -->
+    <section class="testimonials scroll-reveal">
+        <div class="container">
+            <div class="section-header">
+                <h2>Ils ont adoré, <span class="text-primary">vous aussi</span></h2>
+            </div>
+
+            <div class="testimonials-masonry">
+                <div *ngFor="let t of testimonials" class="testi-card">
+                    <div class="stars">
+                        <lucide-icon *ngFor="let s of [1,2,3,4,5]" [name]="Icons.Star" class="star-icon"></lucide-icon>
+                    </div>
+                    <lucide-icon [name]="Icons.Quote" class="quote-icon"></lucide-icon>
+                    <p class="testi-text">"{{ t.text }}"</p>
+                    <div class="testi-author">
+                        <strong>{{ t.name }}</strong>, {{ t.location }} 💕
+                        <span class="testi-date">{{ t.date }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="trust-stats">
+                <div class="trust-item">
+                    <strong>92%</strong>
+                    <span>recommandent à leurs amis</span>
+                </div>
+                <div class="trust-item">
+                    <strong>4.9/5</strong>
+                    <span>étoiles moyennes</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. FAQ SECTION -->
+    <section class="faq-section scroll-reveal">
+        <div class="container">
+            <div class="section-header">
+                <h2>Vos questions, <span class="text-primary">nos réponses</span></h2>
+            </div>
+
+            <div class="faq-accordion">
+                <div *ngFor="let faq of faqs; let i = index" class="faq-item" [class.open]="faq.isOpen">
+                    <button class="faq-question" (click)="toggleFaq(i)">
+                        <span>{{ faq.question }}</span>
+                        <lucide-icon [name]="Icons.ChevronDown" class="chevron"></lucide-icon>
+                    </button>
+                    <div class="faq-answer">
+                        <p>{{ faq.answer }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="final-cta scroll-reveal">
+        <div class="cta-particles"></div>
+        <div class="container">
+            <div class="cta-content">
+                <div class="countdown-badge" *ngIf="daysToValentine > 0">
+                    <lucide-icon [name]="Icons.Clock" class="clock-icon"></lucide-icon>
+                    <span>J-{{ daysToValentine }} avant la Saint-Valentin</span>
+                </div>
+                <h2>La Saint-Valentin approche... <br>Créez quelque chose d'inoubliable</h2>
+
+                <div class="cta-buttons">
+                    <button routerLink="/secret-message/create" class="btn btn-primary btn-gold">
+                        Créer ma surprise maintenant
+                    </button>
+                    <button (click)="goHome()" class="btn btn-outline-white">
+                        Voir des exemples
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

@@ -1,0 +1,62 @@
+<div class="secret-message-view">
+  <!-- Loading State -->
+  <div *ngIf="loading()" class="loading-container">
+    <div class="spinner"></div>
+    <p>Déchiffrement du message...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error() && !loading()" class="error-container">
+    <div class="error-box">
+      <h2>❌ Erreur</h2>
+      <p>{{ error() }}</p>
+      <button class="btn btn-primary" (click)="goHome()">
+        Retour à l'accueil
+      </button>
+    </div>
+  </div>
+
+  <!-- Message Container -->
+  <div *ngIf="message() && !loading() && !error()" class="message-container">
+    <!-- Before Reveal -->
+    <div *ngIf="!revealed()" class="before-reveal">
+      <div class="locked-box">
+        <div class="lock-icon">🔒</div>
+        <h1>Message Crypté</h1>
+        <p>Cliquez pour révéler le message secret</p>
+        <div class="views-info">
+          <span>Lectures restantes: {{ maxViews() - currentViews() }} / {{ maxViews() }}</span>
+        </div>
+        <button class="btn btn-primary btn-large" (click)="revealMessage()">
+          ✨ Révéler le Message
+        </button>
+      </div>
+    </div>
+
+    <!-- After Reveal -->
+    <div *ngIf="revealed()" class="after-reveal">
+      <div class="message-box">
+        <div class="unlock-icon">🔓</div>
+        <div class="message-content">
+          {{ message() }}
+        </div>
+        <div class="message-actions">
+          <button class="btn btn-secondary" (click)="copyToClipboard()">
+            📋 Copier
+          </button>
+          <button class="btn btn-secondary" (click)="goHome()">
+            🏠 Accueil
+          </button>
+        </div>
+        <div class="views-remaining">
+          <p *ngIf="currentViews() < maxViews()">
+            Lectures restantes: {{ maxViews() - currentViews() }} / {{ maxViews() }}
+          </p>
+          <p *ngIf="currentViews() >= maxViews()" class="last-view">
+            ⚠️ C'était la dernière lecture. Le message sera supprimé.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

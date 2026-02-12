@@ -1,0 +1,10 @@
+<div class="memory-card" [class.flipped]="card.flipped" [class.matched]="card.matched" (click)="onClick()">
+  <div class="card-inner">
+    <div class="card-front">
+      <div class="card-icon">❤️</div>
+    </div>
+    <div class="card-back">
+      <img [src]="card.image" [alt]="'Card ' + card.id" />
+    </div>
+  </div>
+</div>
