@@ -11,24 +11,24 @@ export class LoveWheelController {
     try {
       const data: CreateLoveWheelDto = req.body;
       const db = getDatabase();
-      
+
       const wheelId = generateGameId();
       const now = new Date().toISOString();
-      
+
       // Insert wheel
       const wheelStmt = db.prepare(`
         INSERT INTO love_wheels (id, max_spins_per_day, created_at)
         VALUES (?, ?, ?)
       `);
-      
+
       wheelStmt.run(wheelId, data.maxSpinsPerDay, now);
-      
+
       // Insert sections
       const sectionStmt = db.prepare(`
         INSERT INTO wheel_sections (wheel_id, section_number, text, description, color, icon, probability_weight)
         VALUES (?, ?, ?, ?, ?, ?, ?)
       `);
-      
+
       data.sections.forEach(section => {
         sectionStmt.run(
           wheelId,
@@ -40,7 +40,7 @@ export class LoveWheelController {
           section.probabilityWeight
         );
       });
-      
+
       res.status(201).json({
         id: wheelId,
         maxSpinsPerDay: data.maxSpinsPerDay,
@@ -57,7 +57,7 @@ export class LoveWheelController {
       });
     }
   }
-  
+
   /**
    * Get a love wheel
    */
@@ -65,12 +65,12 @@ export class LoveWheelController {
     try {
       const { id } = req.params;
       const db = getDatabase();
-      
+
       // Get wheel
       const wheel = db.prepare(`
         SELECT * FROM love_wheels WHERE id = ?
       `).get(id) as any;
-      
+
       if (!wheel) {
         res.status(404).json({
           error: 'Not Found',
@@ -80,12 +80,12 @@ export class LoveWheelController {
         });
         return;
       }
-      
+
       // Get sections
       const sections = db.prepare(`
         SELECT * FROM wheel_sections WHERE wheel_id = ? ORDER BY section_number
-      `).all() as any[];
-      
+      `).all(id) as any[];
+
       res.json({
         id: wheel.id,
         maxSpinsPerDay: wheel.max_spins_per_day,
@@ -109,7 +109,7 @@ export class LoveWheelController {
       });
     }
   }
-  
+
   /**
    * Spin the wheel
    */
@@ -118,12 +118,12 @@ export class LoveWheelController {
       const { id } = req.params;
       const data: SpinWheelDto = req.body;
       const db = getDatabase();
-      
+
       // Get wheel and sections
       const wheel = db.prepare(`
         SELECT * FROM love_wheels WHERE id = ?
       `).get(id) as any;
-      
+
       if (!wheel) {
         res.status(404).json({
           error: 'Not Found',
@@ -133,16 +133,16 @@ export class LoveWheelController {
         });
         return;
       }
-      
+
       const sections = db.prepare(`
         SELECT * FROM wheel_sections WHERE wheel_id = ? ORDER BY section_number
-      `).all() as any[];
-      
+      `).all(id) as any[];
+
       // Select a section based on probability weights
       const totalWeight = sections.reduce((sum, s) => sum + s.probability_weight, 0);
       let random = Math.random() * totalWeight;
       let selectedSection = sections[0];
-      
+
       for (const section of sections) {
         random -= section.probability_weight;
         if (random <= 0) {
@@ -150,16 +150,16 @@ export class LoveWheelController {
           break;
         }
       }
-      
+
       // Record the spin
       const now = new Date().toISOString();
       const spinStmt = db.prepare(`
         INSERT INTO wheel_spins (wheel_id, section_id, session_id, is_completed, spun_at)
         VALUES (?, ?, ?, ?, ?)
       `);
-      
+
       spinStmt.run(id, selectedSection.id, data.sessionId || null, 0, now);
-      
+
       res.json({
         sectionNumber: selectedSection.section_number,
         text: selectedSection.text,
@@ -178,7 +178,7 @@ export class LoveWheelController {
       });
     }
   }
-  
+
   /**
    * Get spin history
    */
@@ -186,7 +186,7 @@ export class LoveWheelController {
     try {
       const { id } = req.params;
       const db = getDatabase();
-      
+
       // Get spins
       const spins = db.prepare(`
         SELECT ws.*, wse.text, wse.description, wse.color, wse.icon
@@ -195,8 +195,8 @@ export class LoveWheelController {
         WHERE ws.wheel_id = ?
         ORDER BY ws.spun_at DESC
         LIMIT 50
-      `).all() as any[];
-      
+      `).all(id) as any[];
+
       res.json({
         spins: spins.map(spin => ({
           sectionNumber: spin.section_number,
