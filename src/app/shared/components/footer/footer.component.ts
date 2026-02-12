@@ -23,7 +23,7 @@ import { LucideAngularModule, Heart } from 'lucide-angular';
             <h4>Expériences</h4>
             <ul>
               <li><a routerLink="/secret-message/create">Messages Cryptés</a></li>
-              <!-- <li><a routerLink="/memory">Memory Photos</a></li> -->
+              <li><a routerLink="/memory/create">Memory Photos</a></li>
               <!-- <li><a routerLink="/treasure-hunt">Parcours Surprise</a></li> -->
               <li><a routerLink="/love-wheel/create">Roue de l'Amour</a></li>
             </ul>
@@ -45,117 +45,7 @@ import { LucideAngularModule, Heart } from 'lucide-angular';
       </div>
     </footer>
   `,
-  styles: [`
-    .main-footer {
-      padding: 6rem 0 3rem;
-      background: #1a0a19;
-      color: rgba(255, 255, 255, 0.6);
-      position: relative;
-      z-index: 100; /* Ensure footer is above particles */
-      overflow: hidden;
-
-      &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background: linear-gradient(90deg, transparent, rgba(255, 107, 157, 0.3), transparent);
-      }
-    }
-
-    .footer-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 2rem;
-    }
-
-    .footer-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 4rem;
-      margin-bottom: 4rem;
-    }
-
-    .footer-logo {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      font-size: 1.8rem;
-      font-weight: 900;
-      color: white;
-      margin-bottom: 1.5rem;
-
-      .footer-logo-img {
-        width: 45px;
-        height: 45px;
-        object-fit: contain;
-        animation: heartBeat 2s infinite;
-        filter: drop-shadow(0 0 10px rgba(255, 0, 85, 0.5));
-      }
-    }
-
-    .slogan {
-      font-style: italic;
-      line-height: 1.6;
-      font-size: 0.95rem;
-    }
-
-    h4 {
-      color: white;
-      margin-bottom: 1.5rem;
-      font-size: 1.1rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-
-      li {
-        margin-bottom: 0.75rem;
-
-        a {
-          color: inherit;
-          text-decoration: none;
-          font-size: 0.95rem;
-          transition: all 0.3s ease;
-          display: inline-block;
-          cursor: pointer;
-          position: relative;
-          z-index: 101;
-
-          &:hover {
-            color: #FF6B9D;
-            transform: translateX(5px);
-          }
-        }
-      }
-    }
-
-    .footer-bottom {
-      padding-top: 3rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.05);
-      text-align: center;
-      font-size: 0.9rem;
-    }
-
-    @keyframes heartBeat {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.15); }
-    }
-
-    @media (max-width: 768px) {
-      .main-footer { padding: 4rem 0 2rem; }
-      .footer-grid { gap: 2rem; text-align: center; }
-      .footer-logo { justify-content: center; }
-      ul li a:hover { transform: none; }
-    }
-  `]
+  styleUrls: ['./footer.component.scss']
 })
 export class FooterComponent {
   readonly Heart = Heart;

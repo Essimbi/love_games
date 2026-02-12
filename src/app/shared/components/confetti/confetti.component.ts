@@ -28,36 +28,7 @@ interface Confetti {
       ></div>
     </div>
   `,
-  styles: [`
-    .confetti-container {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 999;
-      overflow: hidden;
-    }
-
-    .confetti {
-      position: absolute;
-      top: -10px;
-      border-radius: 50%;
-      animation: confetti-fall 3s ease-in forwards;
-    }
-
-    @keyframes confetti-fall {
-      0% {
-        transform: translateY(-100vh) rotate(0deg);
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(100vh) rotate(720deg);
-        opacity: 0;
-      }
-    }
-  `]
+  styleUrls: ['./confetti.component.scss']
 })
 export class ConfettiComponent implements OnInit, OnDestroy {
   confettis: Confetti[] = [];

@@ -68,6 +68,7 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     private parallaxY = 0;
 
     private galleryInterval: any;
+    private resizeListener: (() => void) | null = null;
 
     // Icons
     readonly Icons = {
@@ -250,6 +251,9 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
         if (isPlatformBrowser(this.platformId)) {
             window.removeEventListener('scroll', this.onScroll);
             window.removeEventListener('mousemove', this.onMouseMoveParallax);
+            if (this.resizeListener) {
+                window.removeEventListener('resize', this.resizeListener);
+            }
             this.stopGalleryTimer();
             const cursor = document.querySelector('.magic-cursor');
             if (cursor) cursor.remove();
@@ -369,7 +373,8 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
         const canvas = this.canvasRef.nativeElement;
         this.ctx = canvas.getContext('2d');
         this.resizeCanvas();
-        window.addEventListener('resize', () => this.resizeCanvas());
+        this.resizeListener = () => this.resizeCanvas();
+        window.addEventListener('resize', this.resizeListener);
         for (let i = 0; i < 40; i++) this.particles.push(this.createParticle(true));
         this.animate();
     }
