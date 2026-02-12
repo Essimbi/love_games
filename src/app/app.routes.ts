@@ -4,6 +4,7 @@ import { SECRET_MESSAGE_ROUTES } from './features/secret-message/secret-message.
 import { MEMORY_GAME_ROUTES } from './features/memory-game/memory-game.routes';
 import { TREASURE_HUNT_ROUTES } from './features/treasure-hunt/treasure-hunt.routes';
 import { LOVE_WHEEL_ROUTES } from './features/love-wheel/love-wheel.routes';
+import { LEGAL_ROUTES } from './features/legal/legal.routes';
 
 export const routes: Routes = [
   {
@@ -25,6 +26,10 @@ export const routes: Routes = [
   {
     path: 'love-wheel',
     children: LOVE_WHEEL_ROUTES
+  },
+  {
+    path: '',
+    children: LEGAL_ROUTES
   },
   {
     path: '',
