@@ -70,9 +70,9 @@ import { filter } from 'rxjs/operators';
       <div class="mobile-menu" [class.open]="isMenuOpen">
         <nav class="mobile-nav">
           <a routerLink="/secret-message/create" (click)="isMenuOpen = false">Messages</a>
-          <a routerLink="/memory" (click)="isMenuOpen = false">Memory</a>
-          <a routerLink="/treasure-hunt" (click)="isMenuOpen = false">Parcours</a>
-          <a routerLink="/love-wheel" (click)="isMenuOpen = false">Roue</a>
+          <a routerLink="/memory/create" (click)="isMenuOpen = false">Memory</a>
+          <!-- <a routerLink="/treasure-hunt" (click)="isMenuOpen = false">Parcours</a> -->
+          <a routerLink="/love-wheel/create" (click)="isMenuOpen = false">Roue</a>
           <hr>
           <a routerLink="/secret-message/create" class="btn-primary" (click)="isMenuOpen = false">Créer ma surprise</a>
         </nav>
