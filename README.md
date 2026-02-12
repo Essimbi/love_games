@@ -1,59 +1,100 @@
-# ValentineGamesPlatform
+# Valentine Games Platform 💝
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.0.
+Une plateforme interactive pour créer et partager des jeux romantiques pour la Saint-Valentin.
 
-## Development server
+## 👨‍💻 Développeur
 
-To start a local development server, run:
+**ESSIMBI Louis Jos Deranot**
+- 📱 WhatsApp: +237 695 16 41 83
+- 📧 Email: essimbideranot@gmail.com
 
-```bash
-ng serve
-```
+## 🎮 Fonctionnalités
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+- **Messages Cryptés** - Messages secrets chiffrés AES-256
+- **Memory Game** - Jeu de mémoire avec photos personnalisées
+- **Chasse au Trésor** - Parcours d'énigmes interactif
+- **Roue de l'Amour** - Roue interactive pour décider d'activités
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## 🚀 Installation
 
 ```bash
-ng generate --help
+# Cloner le repository
+git clone <repository-url>
+
+# Installer les dépendances
+npm install
+
+# Lancer en développement
+npm run dev
+
+# Build de production
+npm run build
+
+# Lancer le serveur SSR
+npm run serve:ssr:valentine-games-platform
 ```
 
-## Building
+## 🛠️ Technologies
 
-To build the project run:
+- **Frontend:** Angular 21.1.3
+- **Backend:** Node.js + Express
+- **Base de données:** SQLite (better-sqlite3)
+- **Sécurité:** Helmet, AES-256 encryption
+- **Validation:** Zod
+- **Styling:** SCSS
+
+## 📁 Structure du Projet
+
+```
+src/
+├── app/
+│   ├── core/          # Services globaux
+│   ├── features/      # Modules fonctionnels
+│   └── shared/        # Composants partagés
+├── server/            # Backend Node.js
+│   ├── api/          # Routes et contrôleurs
+│   └── database/     # SQLite + migrations
+└── assets/           # Ressources statiques
+```
+
+## 🔐 Sécurité
+
+- Chiffrement AES-256 pour les messages secrets
+- Headers de sécurité avec Helmet
+- Validation des données avec Zod
+- Rate limiting sur les API
+- Protection CSRF
+
+## 📊 Base de Données
+
+SQLite avec les tables suivantes:
+- `memory_games` - Jeux de memory
+- `memory_images` - Images des jeux
+- `memory_scores` - Scores des joueurs
+- `secret_messages` - Messages chiffrés
+- `treasure_hunts` - Chasses au trésor
+- `love_wheels` - Roues de l'amour
+- `analytics_events` - Événements trackés
+
+## 🧪 Tests
 
 ```bash
-ng build
+# Tests unitaires
+npm run test
+
+# Tests E2E
+npm run e2e
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## 📝 Documentation
 
-## Running unit tests
+Voir [DOCUMENTATION.md](./DOCUMENTATION.md) pour la documentation complète.
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+## 📄 Licence
 
-```bash
-ng test
-```
+© 2025-2026 Valentine Games Platform by ESSIMBI Louis Jos Deranot
 
-## Running end-to-end tests
+---
 
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+**Version:** 1.0.0  
+**Dernière mise à jour:** 12 Février 2026
