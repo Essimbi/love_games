@@ -84,18 +84,18 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
         {
             id: 'secret-message',
             title: '💌 Message Crypté',
-            description: 'Un secret qui se révèle une seule fois... Magique.',
+            description: 'Partagez vos sentiments les plus intimes dans un secret qui se révèle une seule fois.',
             icon: MessageCircleHeart,
             route: '/secret-message/create',
             color: '#FF6B9D',
             duration: '2 min',
-            tag: 'Mystère',
+            tag: 'Intimité',
             image: '/assets/images/secret-message.png'
         },
         {
             id: 'memory',
             title: '🧠 Memory',
-            description: 'Testez votre complicité avec vos propres photos.',
+            description: 'Testez votre complicité en reconstituant vos plus beaux souvenirs ensemble.',
             icon: Brain,
             route: '/memory',
             color: '#C9184A',
@@ -106,7 +106,7 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
         {
             id: 'treasure-hunt',
             title: '🗺️ Chasse au Trésor',
-            description: 'Un parcours d\'énigmes vers une surprise finale.',
+            description: 'Un parcours rempli de souvenirs partagés qui mènent à une surprise finale.',
             icon: MapPin,
             route: '/treasure-hunt',
             color: '#FF4D6D',
@@ -117,12 +117,12 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
         {
             id: 'love-wheel',
             title: '🎡 Roue de l\'Amour',
-            description: 'Laissez le destin décider de votre soirée.',
+            description: 'Laissez le destin décider de vos moments précieux et créez de nouveaux souvenirs.',
             icon: RotateCcw,
             route: '/love-wheel',
             color: '#FFB3C6',
             duration: 'Rapide',
-            tag: 'Fun',
+            tag: 'Connexion',
             image: '/assets/images/love-wheel.png'
         }
     ];
@@ -130,52 +130,52 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     steps = [
         {
             title: 'Créez',
-            description: 'Personnalisez votre jeu en quelques clics',
+            description: 'Tissez votre histoire unique en personnalisant chaque détail',
             icon: Pencil
         },
         {
             title: 'Partagez',
-            description: 'Un lien unique généré instantanément',
+            description: 'Un lien magique, un moment privilégié avec votre amour',
             icon: Link
         },
         {
-            title: 'Émerveillez',
-            description: 'Votre partenaire découvre votre surprise',
+            title: 'Célébrez',
+            description: 'Gravez ce souvenir dans vos cœurs pour toujours',
             icon: PartyPopper
         }
     ];
 
     features = [
         {
-            title: '100% Sécurisé',
-            description: 'Vos messages sont chiffrés. Même nous ne pouvons pas les lire.',
+            title: 'Votre Intimité, Protégée',
+            description: 'Vos messages sont chiffrés de bout en bout. Vos secrets restent vôtres.',
             icon: ShieldCheck,
             badge: 'AES-256'
         },
         {
-            title: 'Totalement Gratuit',
-            description: 'Sans abonnement ni frais cachés. L\'amour n\'a pas de prix.',
+            title: 'Libre de Créer',
+            description: 'Aucun frais, aucune limite. L\'amour ne devrait jamais être payant.',
             icon: Gift,
-            badge: 'L\'amour est gratuit'
+            badge: 'Gratuit'
         },
         {
-            title: 'Sans Inscription',
-            description: 'Créez votre surprise en 2 minutes, sans compte.',
+            title: 'Zéro Prise de Tête',
+            description: 'Créez votre moment en 2 minutes, sans compte ni inscription.',
             icon: Rocket,
-            badge: 'Instantané'
+            badge: 'Simple'
         },
         {
-            title: 'Personnalisable',
-            description: 'Chaque jeu s\'adapte à votre histoire unique.',
+            title: 'Entièrement Vôtre',
+            description: 'Chaque expérience se façonne à votre amour unique et personnel.',
             icon: Palette,
-            badge: 'Unique'
+            badge: 'Personnel'
         }
     ];
 
     galleryImages = [
-        { url: '/assets/images/dinner.png', title: 'Dîners aux étoiles' },
-        { url: '/assets/images/stargazing.png', title: 'Moments suspendus' },
-        { url: '/assets/images/secret-message.png', title: 'Secrets partagés' }
+        { url: '/assets/images/dinner.png', title: 'Moments Volés' },
+        { url: '/assets/images/stargazing.png', title: 'Souvenirs Éternels' },
+        { url: '/assets/images/secret-message.png', title: 'Amour Partagé' }
     ];
     activeGalleryIndex = 0;
 
@@ -183,23 +183,23 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
         {
             name: 'Marie',
             location: 'Paris',
-            text: 'Le message crypté a fait pleurer mon copain de joie. C\'était tellement personnel et magique !',
-            stars: 5,
-            date: 'Février 2025'
-        },
-        {
-            name: 'Thomas',
-            location: 'Lyon',
-            text: 'La chasse au trésor a transformé notre salon en aventure. Recommandé à 100% !',
+            text: 'Un moment si personnel et tendre. C\'était comme redécouvrir l\'amour dans chaque détail.',
             stars: 5,
             date: 'Janvier 2026'
         },
         {
+            name: 'Thomas',
+            location: 'Lyon',
+            text: 'Ça a transformé une soirée ordinaire en un vrai voyage émotionnel. Notre complicité s\'est renforcée.',
+            stars: 5,
+            date: 'Février 2026'
+        },
+        {
             name: 'Léa',
             location: 'Genève',
-            text: 'Super simple à utiliser et le rendu est vraiment premium. Mon mari a adoré.',
+            text: 'Simplement magnifique. On a créé des souvenirs précieux qu\'on va chérir pour toujours.',
             stars: 5,
-            date: 'Saint-Valentin 2025'
+            date: 'Janvier 2026'
         }
     ];
 

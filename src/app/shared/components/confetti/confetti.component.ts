@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 interface Confetti {
@@ -15,9 +15,9 @@ interface Confetti {
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="confetti-container">
+    <div class="confetti-container" *ngIf="confettis.length > 0">
       <div
-        *ngFor="let confetti of confettis"
+        *ngFor="let confetti of confettis; trackBy: trackByConfettiId"
         class="confetti"
         [style.left.%]="confetti.left"
         [style.animation-delay.ms]="confetti.delay"
@@ -28,14 +28,19 @@ interface Confetti {
       ></div>
     </div>
   `,
-  styleUrls: ['./confetti.component.scss']
+  styleUrls: ['./confetti.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None
 })
 export class ConfettiComponent implements OnInit, OnDestroy {
   confettis: Confetti[] = [];
   private timeout: any;
 
+  constructor(private cdr: ChangeDetectorRef) {}
+
   ngOnInit(): void {
     this.generateConfetti();
+    this.cdr.markForCheck();
     // Auto-cleanup after animation
     this.timeout = setTimeout(() => {
       this.cleanup();
@@ -43,7 +48,15 @@ export class ConfettiComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    clearTimeout(this.timeout);
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+      this.timeout = null;
+    }
+    this.confettis = [];
+  }
+
+  trackByConfettiId(index: number, item: Confetti): string {
+    return item.id;
   }
 
   private generateConfetti(): void {
@@ -64,5 +77,6 @@ export class ConfettiComponent implements OnInit, OnDestroy {
 
   private cleanup(): void {
     this.confettis = [];
+    this.cdr.markForCheck();
   }
 }

@@ -3,12 +3,12 @@
   background: var(--color-midnight);
   padding: 8rem 1rem;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 
   // --- Dynamic Mesh Background ---
   &::before {
     content: '';
-    position: absolute;
+    position: fixed;
     top: -10%;
     left: -10%;
     width: 600px;
@@ -16,11 +16,12 @@
     background: radial-gradient(circle, rgba(255, 0, 85, 0.15) 0%, transparent 70%);
     filter: blur(80px);
     z-index: 0;
+    pointer-events: none;
   }
 
   &::after {
     content: '';
-    position: absolute;
+    position: fixed;
     bottom: -10%;
     right: -10%;
     width: 600px;
@@ -28,6 +29,7 @@
     background: radial-gradient(circle, rgba(201, 24, 74, 0.15) 0%, transparent 70%);
     filter: blur(80px);
     z-index: 0;
+    pointer-events: none;
   }
 
   .container {
@@ -127,6 +129,7 @@
     font-size: 1.1rem;
     font-family: inherit;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform, box-shadow;
 
     &:focus {
       outline: none;
@@ -356,15 +359,114 @@
 
 @media (max-width: 768px) {
   .secret-message-create {
-    padding: 6rem 1.5rem 4rem;
+    padding: 4rem 1rem 3rem;
+    overflow-x: hidden;
+
+    .header {
+      margin-bottom: 3rem;
+    }
 
     .form-glass {
-      padding: 3rem 2rem;
-      border-radius: 30px;
+      padding: 2rem 1.5rem;
+      border-radius: 24px;
+      overflow-y: auto;
+      max-height: none;
     }
 
     .header h1 {
-      font-size: 2.8rem;
+      font-size: 2.2rem;
+    }
+
+    .form-group {
+      margin-bottom: 2rem;
+    }
+
+    .textarea {
+      min-height: 150px;
+    }
+
+    .image-upload-grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .upload-dropzone {
+      height: auto;
+      min-height: 120px;
+
+      &.full-width {
+        grid-column: span 1;
+      }
+    }
+
+    .image-preview-box {
+      height: 120px;
+    }
+
+    .btn-submit {
+      padding: 1.5rem;
+      font-size: 1rem;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .secret-message-create {
+    padding: 3rem 0.75rem 2rem;
+
+    .form-glass {
+      padding: 1.5rem 1rem;
+    }
+
+    .header {
+      margin-bottom: 2rem;
+    }
+
+    .header p {
+      font-size: 1rem;
+    }
+
+    .header h1 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      font-size: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .textarea,
+    .select,
+    .input {
+      padding: 1rem;
+      font-size: 1rem;
+      border-radius: 16px;
+    }
+
+    .textarea {
+      min-height: 120px;
+    }
+
+    .char-count {
+      font-size: 0.75rem;
+      bottom: 1rem;
+      right: 1rem;
+    }
+
+    .btn-submit {
+      padding: 1.2rem;
+      font-size: 0.95rem;
+      letter-spacing: 1px;
+    }
+
+    .row {
+      grid-template-columns: 1fr !important;
+      gap: 1rem !important;
     }
   }
 }

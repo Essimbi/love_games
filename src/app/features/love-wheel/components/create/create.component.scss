@@ -5,12 +5,12 @@
     padding: 4rem 1rem;
     position: relative;
     background: radial-gradient(circle at top right, var(--color-midnight-light), var(--color-midnight));
-    overflow-x: hidden;
+    overflow: visible;
 
     // Background Mesh
     &::before {
         content: '';
-        position: absolute;
+        position: fixed;
         top: 0;
         left: 0;
         right: 0;
@@ -19,6 +19,7 @@
             radial-gradient(at 0% 0%, rgba(255, 0, 85, 0.05) 0px, transparent 50%),
             radial-gradient(at 100% 100%, rgba(255, 0, 85, 0.05) 0px, transparent 50%);
         pointer-events: none;
+        z-index: 0;
     }
 
     .container {
@@ -51,6 +52,30 @@
             max-width: 600px;
             margin: 0 auto;
         }
+
+        @media (max-width: 768px) {
+            margin-bottom: 2rem;
+
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            p {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            margin-bottom: 1.5rem;
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            p {
+                font-size: 0.9rem;
+            }
+        }
     }
 
     .form-glass {
@@ -60,6 +85,16 @@
         border-radius: 40px;
         padding: 3rem;
         box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+
+        @media (max-width: 768px) {
+            padding: 1.5rem;
+            border-radius: 30px;
+        }
+
+        @media (max-width: 480px) {
+            padding: 1rem;
+            border-radius: 24px;
+        }
     }
 
     .settings-grid {
@@ -95,6 +130,11 @@
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         gap: 1.5rem;
         margin-bottom: 2rem;
+
+        @media (max-width: 768px) {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
     }
 
     .section-card {
@@ -103,6 +143,7 @@
         border-radius: 24px;
         padding: 1.5rem;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        will-change: transform, background, border-color;
 
         &:hover {
             background: rgba(255, 255, 255, 0.05);
@@ -164,6 +205,7 @@
             color: white;
             font-size: 1rem;
             transition: all 0.3s;
+            will-change: border-color, background, box-shadow;
 
             &:focus {
                 outline: none;
@@ -240,6 +282,7 @@
         cursor: pointer;
         transition: all 0.3s;
         margin-top: 1rem;
+        will-change: background, border-color, color;
 
         &:hover {
             background: rgba(255, 0, 85, 0.03);
@@ -301,6 +344,7 @@
         align-items: center;
         justify-content: center;
         gap: 1rem;
+        will-change: transform, box-shadow;
 
         &:hover:not(:disabled) {
             transform: scale(1.02);
@@ -354,6 +398,156 @@
 
         .sections-grid {
             grid-template-columns: 1fr;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+
+            &.mini {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .preview-section {
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .btn-submit {
+            padding: 1.2rem;
+            font-size: 1rem;
+            margin-top: 2rem;
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .love-wheel-create {
+        padding: 1.5rem 0.75rem;
+
+        .container {
+            padding: 0 0.5rem;
+        }
+
+        .form-glass {
+            padding: 1rem;
+            border-radius: 20px;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .header p {
+            font-size: 0.85rem;
+        }
+
+        .sections-grid {
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .section-card {
+            padding: 1rem;
+
+            .card-header {
+                margin-bottom: 0.75rem;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+
+            label {
+                font-size: 0.85rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .input,
+            .textarea,
+            .select {
+                padding: 0.75rem 1rem;
+                font-size: 1rem;
+                border-radius: 12px;
+            }
+
+            .textarea {
+                min-height: 100px;
+            }
+
+            .hint {
+                font-size: 0.75rem;
+                margin-top: 0.25rem;
+            }
+        }
+
+        .form-row {
+            gap: 0.5rem;
+
+            &.mini {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .color-picker-wrapper {
+            padding: 0.4rem;
+            gap: 0.5rem;
+
+            .color-dot {
+                width: 24px;
+                height: 24px;
+            }
+
+            .hex-code {
+                font-size: 0.75rem;
+            }
+        }
+
+        .sections-header h2 {
+            font-size: 1.3rem;
+        }
+
+        .count-badge {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+        }
+
+        .preview-section {
+            padding: 1rem;
+            margin-top: 1.5rem;
+            border-radius: 24px;
+
+            h3 {
+                font-size: 1.2rem;
+                margin-bottom: 1rem;
+            }
+
+            .preview-glow {
+                width: 200px;
+                height: 200px;
+            }
+        }
+
+        .btn-submit {
+            padding: 1rem;
+            font-size: 0.95rem;
+            margin-top: 1.5rem;
+            border-radius: 16px;
+        }
+
+        .btn-add {
+            padding: 1rem;
+            font-size: 0.9rem;
+            margin-top: 0.75rem;
+        }
+
+        .error-message {
+            padding: 0.75rem;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
         }
     }
 }
