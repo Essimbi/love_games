@@ -6,7 +6,15 @@
     radial-gradient(circle at 90% 80%, rgba(100, 0, 255, 0.1) 0%, transparent 20%);
   padding: 6rem 1rem 4rem;
   position: relative;
-  overflow-x: hidden;
+  overflow: visible;
+
+  @media (max-width: 768px) {
+    padding: 4rem 1rem 3rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 3rem 0.75rem 2rem;
+  }
 
   /* Floating Particles Background */
   &::before {
@@ -46,6 +54,30 @@
       color: rgba(255, 255, 255, 0.7);
       font-size: 1.1rem;
     }
+
+    @media (max-width: 768px) {
+      margin-bottom: 2rem;
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      p {
+        font-size: 1rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      margin-bottom: 1.5rem;
+
+      h1 {
+        font-size: 1.6rem;
+      }
+
+      p {
+        font-size: 0.9rem;
+      }
+    }
   }
 
   .form {
@@ -58,6 +90,12 @@
 
     @media (max-width: 768px) {
       padding: 1.5rem;
+      border-radius: 20px;
+    }
+
+    @media (max-width: 480px) {
+      padding: 1rem;
+      border-radius: 16px;
     }
   }
 
@@ -83,6 +121,7 @@
     font-size: 1rem;
     transition: all 0.3s ease;
     cursor: pointer;
+    will-change: border-color, box-shadow;
 
     &:focus {
       outline: none;
@@ -143,6 +182,11 @@
     margin-top: 2rem;
     margin-bottom: 1rem;
 
+    @media (max-width: 480px) {
+      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      gap: 1rem;
+    }
+
     .image-item {
       position: relative;
       border-radius: 12px;
@@ -151,6 +195,7 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
       box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
       transition: transform 0.3s ease;
+      will-change: transform;
 
       &:hover {
         transform: scale(1.05);
@@ -178,6 +223,7 @@
         align-items: center;
         justify-content: center;
         transition: all 0.2s ease;
+        will-change: background, transform;
 
         &:hover {
           background: #ff4757;
@@ -236,6 +282,7 @@
     min-height: 120px;
     transition: all 0.3s ease;
     resize: vertical;
+    will-change: border-color, box-shadow;
 
     &:focus {
       outline: none;
@@ -275,6 +322,7 @@
     position: relative;
     overflow: hidden;
     margin-top: 1rem;
+    will-change: transform, box-shadow;
 
     &::before {
       content: '';
@@ -301,6 +349,11 @@
       opacity: 0.5;
       cursor: not-allowed;
       filter: grayscale(1);
+    }
+
+    @media (max-width: 480px) {
+      padding: 1rem;
+      font-size: 1rem;
     }
   }
 }

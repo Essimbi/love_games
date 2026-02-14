@@ -8,24 +8,24 @@
         <div class="hero-content">
             <div class="badge fade-in">
                 <lucide-icon [name]="Icons.Sparkles" class="icon-sparkle"></lucide-icon>
-                <span>L'amour mérite une surprise unique</span>
+                <span>Créez des souvenirs gravés dans vos cœurs</span>
             </div>
 
             <h1 class="hero-title fade-in-up">
-                <span class="light">Créez une</span> surprise <br>
-                <span class="gradient-text">inoubliable</span>
-                <span class="light">pour votre</span>
-                <span class="gold-text">Saint-Valentin</span>
+                <span class="light">Célébrez votre</span> amour <br>
+                <span class="gradient-text">à travers des</span>
+                <span class="light">expériences</span>
+                <span class="gold-text">inoubliables</span>
             </h1>
 
             <p class="hero-subtitle fade-in-up delay-1">
-                Parce que les moments précieux méritent plus qu'un simple message.
-                Plongez dans un univers romantique et ludique.
+                Transformez vos sentiments en moments magiques. Chaque jeu est une porte vers la complicité,
+                la tendresse et des souvenirs qui vous uniront à jamais.
             </p>
 
             <div class="hero-actions fade-in-up delay-2">
                 <button routerLink="/secret-message/create" class="btn btn-primary btn-liquid">
-                    <span class="btn-text">Créer ma surprise ❤️</span>
+                    <span class="btn-text">Créer ma première surprise 💕</span>
                     <div class="liquid"></div>
                 </button>
             </div>
@@ -40,8 +40,8 @@
                         <div class="avatar-plus">+{{ surprisesCreated - 3 }}</div>
                     </div>
                     <div class="trust-text">
-                        <strong>{{ surprisesCreated | number }} surprises</strong>
-                        <span>créées aujourd'hui • <span class="pulse-dot"></span> Direct</span>
+                        <strong>{{ surprisesCreated | number }} amours célébrés</strong>
+                        <span>rejoignent le mouvement • <span class="pulse-dot"></span> En direct</span>
                     </div>
                 </div>
             </div>
@@ -59,8 +59,8 @@
     <section id="games" class="games-section scroll-reveal">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">Choisissez votre <span class="text-primary">expérience</span></h2>
-                <p>4 façons uniques de célébrer votre complicité</p>
+                <h2 class="section-title">Explorez vos <span class="text-primary">possibilités</span></h2>
+                <p>Chaque jeu est une expression de votre amour unique</p>
             </div>
 
             <div class="games-grid">
@@ -98,7 +98,7 @@
     <section class="how-it-works scroll-reveal">
         <div class="container">
             <div class="section-header">
-                <h2>Simple comme <span class="text-primary">1, 2, 3</span></h2>
+                <h2>Construisez votre histoire, <span class="text-primary">moment par moment</span></h2>
             </div>
 
             <div class="timeline-container">
@@ -125,8 +125,8 @@
         <div class="watermark-hearts"></div>
         <div class="container">
             <div class="section-header">
-                <h2>L'amour mérite <span class="text-primary">le meilleur</span></h2>
-                <p>Une plateforme pensée pour vos moments les plus précieux</p>
+                <h2>Conçu pour préserver <span class="text-primary">ce qui compte vraiment</span></h2>
+                <p>Chaque détail pensé pour intensifier votre connexion</p>
             </div>
 
             <div class="features-grid">
@@ -157,8 +157,7 @@
                         <div class="parallax-content">
                             <lucide-icon [name]="Icons.Sparkles" class="glam-icon"></lucide-icon>
                             <h3>{{ img.title }}</h3>
-                            <p>Des <span class="highlight">surprises immersives</span> qui font vibrer les cœurs au
-                                milieu de la nuit.</p>
+                            <p>Des <span class="highlight">moments authentiques</span> qui gravissent pour toujours dans vos cœurs.</p>
                         </div>
                     </div>
                 </div>
@@ -175,7 +174,7 @@
     <section class="testimonials scroll-reveal">
         <div class="container">
             <div class="section-header">
-                <h2>Ils ont adoré, <span class="text-primary">vous aussi</span></h2>
+                <h2>Ils ont renforcé leur complicité, <span class="text-primary">vous aussi pouvez</span></h2>
             </div>
 
             <div class="testimonials-masonry">
@@ -209,7 +208,7 @@
     <section class="faq-section scroll-reveal">
         <div class="container">
             <div class="section-header">
-                <h2>Vos questions, <span class="text-primary">nos réponses</span></h2>
+                <h2>Vos questions, <span class="text-primary">pas de secrets</span></h2>
             </div>
 
             <div class="faq-accordion">
@@ -230,19 +229,12 @@
         <div class="cta-particles"></div>
         <div class="container">
             <div class="cta-content">
-                <div class="countdown-badge" *ngIf="daysToValentine > 0">
-                    <lucide-icon [name]="Icons.Clock" class="clock-icon"></lucide-icon>
-                    <span>J-{{ daysToValentine }} avant la Saint-Valentin</span>
-                </div>
-                <h2>La Saint-Valentin approche... <br>Créez quelque chose d'inoubliable</h2>
+                <h2>Chaque moment compte... <br>Transformez vos émotions en souvenirs éternels</h2>
 
                 <div class="cta-buttons">
                     <button routerLink="/secret-message/create" class="btn btn-primary btn-gold">
-                        Créer ma surprise maintenant
+                        Créer ma première surprise maintenant
                     </button>
-                    <!-- <button (click)="goHome()" class="btn btn-outline-white">
-                        Voir des exemples
-                    </button> -->
                 </div>
             </div>
         </div>

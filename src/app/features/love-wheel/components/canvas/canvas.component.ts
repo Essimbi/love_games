@@ -1,5 +1,7 @@
 import { Component, Input, ViewChild, ElementRef, AfterViewInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { isPlatformBrowser } from '@angular/common';
+import { Inject, PLATFORM_ID } from '@angular/core';
 
 export interface WheelSection {
   sectionNumber: number;
@@ -45,13 +47,19 @@ export class LoveWheelCanvasComponent implements AfterViewInit, OnChanges {
 
   @ViewChild('wheelCanvas') canvasRef!: ElementRef<HTMLCanvasElement>;
 
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+
   ngAfterViewInit(): void {
-    this.drawWheel();
+    if (isPlatformBrowser(this.platformId)) {
+      this.drawWheel();
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['sections'] || changes['rotation'] || changes['size']) {
-      this.drawWheel();
+      if (isPlatformBrowser(this.platformId)) {
+        this.drawWheel();
+      }
     }
   }
 
@@ -117,8 +125,12 @@ export class LoveWheelCanvasComponent implements AfterViewInit, OnChanges {
       ctx.textAlign = 'right';
       ctx.textBaseline = 'middle';
       ctx.fillStyle = 'white';
-      ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-      ctx.shadowBlur = 4;
+      try {
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+        ctx.shadowBlur = 4;
+      } catch (e) {
+        // Shadow not supported in SSR
+      }
       ctx.fillText(section.text, radius * 0.85, 0);
 
       ctx.restore();
@@ -133,8 +145,12 @@ export class LoveWheelCanvasComponent implements AfterViewInit, OnChanges {
 
     // --- Center Hub ---
     // Glow
-    ctx.shadowBlur = 15;
-    ctx.shadowColor = 'rgba(255, 0, 85, 0.5)';
+    try {
+      ctx.shadowBlur = 15;
+      ctx.shadowColor = 'rgba(255, 0, 85, 0.5)';
+    } catch (e) {
+      // Shadow not supported in SSR
+    }
 
     ctx.beginPath();
     ctx.arc(centerX, centerY, 20, 0, 2 * Math.PI);
@@ -145,7 +161,11 @@ export class LoveWheelCanvasComponent implements AfterViewInit, OnChanges {
     ctx.stroke();
 
     // Hub detail
-    ctx.shadowBlur = 0;
+    try {
+      ctx.shadowBlur = 0;
+    } catch (e) {
+      // Shadow not supported
+    }
     ctx.beginPath();
     ctx.arc(centerX, centerY, 8, 0, 2 * Math.PI);
     ctx.fillStyle = '#FF0055';
@@ -160,8 +180,12 @@ export class LoveWheelCanvasComponent implements AfterViewInit, OnChanges {
     ctx.lineTo(12, -20);
     ctx.closePath();
     ctx.fillStyle = '#FF0055';
-    ctx.shadowBlur = 10;
-    ctx.shadowColor = '#FF0055';
+    try {
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = '#FF0055';
+    } catch (e) {
+      // Shadow not supported in SSR
+    }
     ctx.fill();
     ctx.strokeStyle = 'white';
     ctx.lineWidth = 2;
