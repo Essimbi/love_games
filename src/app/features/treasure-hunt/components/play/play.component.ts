@@ -1,5 +1,5 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectorRef, Component, Inject, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TreasureHuntService, TreasureHuntResponse, TreasureStep, Position3D } from '../../services/treasure-hunt.service';
@@ -29,7 +29,7 @@ import * as THREE from 'three';
         <header class="play-header glass-hud">
           <div class="step-counter">
             <lucide-icon [name]="'sparkles'" class="neon-pink"></lucide-icon>
-            <span>Clue {{ currentStep }} / {{ hunt.steps.length }}</span>
+            <span>Indice {{ currentStep }} / {{ hunt.steps.length }}</span>
           </div>
           <div class="progress-track">
             <div class="track-fill" [style.width.%]="progressPercent"></div>
@@ -47,7 +47,7 @@ import * as THREE from 'three';
                 type="text" 
                 [(ngModel)]="userAnswer" 
                 (keyup.enter)="submitAnswer()"
-                placeholder="Reveal the path..."
+                placeholder="Révéler le chemin..."
                 class="midnight-input"
                 [disabled]="isSubmitting"
               />
@@ -69,8 +69,8 @@ import * as THREE from 'three';
           <!-- Success Animation Area -->
           <div class="success-reveal glass-card fade-in" *ngIf="showSuccess">
              <lucide-icon [name]="'sparkles'" class="success-icon"></lucide-icon>
-             <h3>Path Unlocked!</h3>
-             <p>The stars are shifting...</p>
+             <h3>Chemin Déverrouillé !</h3>
+             <p>Les étoiles s'alignent...</p>
           </div>
         </main>
 
@@ -79,12 +79,12 @@ import * as THREE from 'three';
           <div class="vault-icon">
             <lucide-icon [name]="'lock'"></lucide-icon>
           </div>
-          <h2>The Secret Vault</h2>
+          <h2>Le Coffre Secret</h2>
           <div class="decrypted-message">
             {{ decryptedFinalMessage }}
           </div>
           <button class="btn-home" (click)="goHome()">
-            Close Vault
+            Fermer le Coffre
           </button>
         </div>
 
@@ -94,10 +94,10 @@ import * as THREE from 'three';
       <div class="overlay-full" *ngIf="isLoading || error">
         <div class="glass-card text-center">
           <div *ngIf="isLoading" class="loader"></div>
-          <p *ngIf="isLoading">Opening the Portal...</p>
+          <p *ngIf="isLoading">Ouverture du Portail...</p>
           <div *ngIf="error" class="error-content">
              <p>⚠️ {{ error }}</p>
-             <button class="btn-home" (click)="goHome()">Return Home</button>
+             <button class="btn-home" (click)="goHome()">Retour à l'Accueil</button>
           </div>
         </div>
       </div>
@@ -134,11 +134,12 @@ import * as THREE from 'three';
     }
 
     .glass-hud {
-      background: rgba(15, 5, 15, 0.7);
-      backdrop-filter: blur(10px);
+      background: rgba(10, 5, 20, 0.4);
+      backdrop-filter: blur(20px) saturate(180%);
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 16px;
       padding: 1rem 2rem;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3), inset 0 0 10px rgba(255, 0, 85, 0.1);
     }
 
     .play-header {
@@ -149,6 +150,7 @@ import * as THREE from 'three';
       max-width: 600px;
       margin: 0 auto;
       width: 100%;
+      border-color: rgba(255, 0, 85, 0.3);
     }
 
     .step-counter {
@@ -157,21 +159,24 @@ import * as THREE from 'three';
       gap: 0.75rem;
       font-weight: 600;
       white-space: nowrap;
+      color: #fff;
+      text-shadow: 0 0 10px rgba(255, 0, 85, 0.5);
     }
 
     .progress-track {
       flex: 1;
-      height: 6px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 3px;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
       overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .track-fill {
       height: 100%;
-      background: #FF0055;
-      box-shadow: 0 0 10px #FF0055;
-      transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      background: linear-gradient(90deg, #FF0055, #764ba2);
+      box-shadow: 0 0 15px #FF0055;
+      transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     .clue-area {
@@ -179,40 +184,53 @@ import * as THREE from 'three';
       display: flex;
       align-items: center;
       justify-content: center;
+      padding-top: 2rem;
     }
 
     .glass-card {
-      background: rgba(15, 5, 15, 0.8);
-      backdrop-filter: blur(15px);
+      background: rgba(15, 5, 25, 0.5);
+      backdrop-filter: blur(25px) saturate(200%);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 24px;
-      padding: 2.5rem;
+      border-radius: 28px;
+      padding: 3rem;
       width: 100%;
-      max-width: 450px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+      max-width: 480px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(255, 0, 85, 0.05);
       text-align: center;
+      border: 1px solid rgba(255, 0, 85, 0.2);
     }
 
     .title {
-      font-size: 1.5rem;
-      color: #FF0055;
-      margin-bottom: 1rem;
+      font-size: 1.75rem;
+      background: linear-gradient(to right, #fff, #FF0055);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1.25rem;
+      letter-spacing: 1px;
     }
 
     .riddle {
-      font-size: 1.1rem;
-      color: rgba(255, 255, 255, 0.8);
-      line-height: 1.6;
-      margin-bottom: 2rem;
+      font-size: 1.15rem;
+      color: rgba(255, 255, 255, 0.9);
+      line-height: 1.7;
+      margin-bottom: 2.5rem;
+      font-weight: 300;
     }
 
     .input-group {
       display: flex;
-      gap: 0.5rem;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 14px;
-      padding: 0.5rem;
+      gap: 0.75rem;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 16px;
+      padding: 0.6rem;
       border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s;
+    }
+
+    .input-group:focus-within {
+        border-color: #FF0055;
+        box-shadow: 0 0 20px rgba(255, 0, 85, 0.2);
+        background: rgba(255, 0, 85, 0.02);
     }
 
     .midnight-input {
@@ -222,105 +240,128 @@ import * as THREE from 'three';
       padding: 0.75rem;
       color: #fff;
       font-family: inherit;
-      font-size: 1rem;
+      font-size: 1.1rem;
     }
 
     .midnight-input:focus { outline: none; }
 
     .btn-reveal {
-      background: #FF0055;
+      background: linear-gradient(135deg, #FF0055, #764ba2);
       border: none;
-      width: 44px;
-      height: 44px;
-      border-radius: 10px;
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
       color: white;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.3s;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 4px 15px rgba(255, 0, 85, 0.3);
     }
 
     .btn-reveal:hover:not(:disabled) {
-      transform: scale(1.05);
-      box-shadow: 0 0 15px rgba(255, 0, 85, 0.4);
+      transform: scale(1.1) rotate(5deg);
+      box-shadow: 0 0 25px rgba(255, 0, 85, 0.5);
     }
 
     .success-reveal {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 1rem;
+      gap: 1.5rem;
     }
 
     .success-icon {
-      width: 60px;
-      height: 60px;
+      width: 70px;
+      height: 70px;
       color: #00ffcc;
-      filter: drop-shadow(0 0 10px #00ffcc);
-      animation: pulse 2s infinite;
+      filter: drop-shadow(0 0 15px #00ffcc);
+      animation: bounce 2s infinite ease-in-out;
     }
 
     .decrypted-message {
-      background: rgba(255, 0, 85, 0.05);
-      border: 1px dashed rgba(255, 0, 85, 0.3);
-      padding: 2rem;
-      border-radius: 16px;
-      margin: 1.5rem 0;
-      font-size: 1.2rem;
-      line-height: 1.6;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 0, 85, 0.2);
+      padding: 2.5rem;
+      border-radius: 20px;
+      margin: 2rem 0;
+      font-size: 1.3rem;
+      line-height: 1.8;
       word-break: break-word;
+      color: #fff;
+      text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
     }
 
     .vault-icon {
-      width: 80px;
-      height: 80px;
-      background: rgba(255, 255, 255, 0.05);
+      width: 90px;
+      height: 90px;
+      background: rgba(255, 255, 255, 0.02);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto 1.5rem;
+      margin: 0 auto 2rem;
       color: #ffd700;
       border: 2px solid #ffd700;
-      box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+      box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+      animation: float 3s infinite ease-in-out;
     }
 
     .btn-home {
-      background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       color: #fff;
-      padding: 0.8rem 2rem;
-      border-radius: 12px;
+      padding: 1rem 2.5rem;
+      border-radius: 14px;
       cursor: pointer;
-      margin-top: 1rem;
+      margin-top: 1.5rem;
+      transition: all 0.3s;
+      font-weight: 500;
+    }
+
+    .btn-home:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: #fff;
+        transform: translateY(-2px);
     }
 
     .overlay-full {
       position: absolute;
       inset: 0;
       z-index: 10;
-      background: #0a050a;
+      background: radial-gradient(circle at center, #1a0a1e, #0a050a);
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
     .loader {
-      border: 3px solid rgba(255, 255, 255, 0.1);
+      border: 3px solid rgba(255, 255, 255, 0.05);
       border-left-color: #FF0055;
       border-radius: 50%;
-      width: 40px;
-      height: 40px;
+      width: 50px;
+      height: 50px;
       animation: spin 1s linear infinite;
-      margin: 0 auto 1rem;
+      margin: 0 auto 1.5rem;
+      box-shadow: 0 0 15px rgba(255, 0, 85, 0.2);
     }
 
     @keyframes spin { to { transform: rotate(360deg); } }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes float { 
+        0%, 100% { transform: translateY(0); } 
+        50% { transform: translateY(-10px); } 
+    }
+    @keyframes bounce { 
+        0%, 100% { transform: scale(1); } 
+        50% { transform: scale(1.1); } 
+    }
+    @keyframes fadeIn { 
+        from { opacity: 0; transform: translateY(20px); } 
+        to { opacity: 1; transform: translateY(0); } 
+    }
 
-    .fade-in { animation: fadeIn 0.6s ease-out; }
+    .fade-in { animation: fadeIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
   `]
 })
 export class TreasureHuntPlayComponent implements OnInit {
@@ -335,24 +376,33 @@ export class TreasureHuntPlayComponent implements OnInit {
   feedbackType = '';
   isCompleted = false;
   decryptedFinalMessage = '';
-
+  isBrowser: boolean;
   @ViewChild(ThreeSceneComponent) threeScene!: ThreeSceneComponent;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private treasureHuntService: TreasureHuntService
-  ) { }
+    private treasureHuntService: TreasureHuntService,
+    private cdr: ChangeDetectorRef,
+    @Inject(PLATFORM_ID) platformId: Object
+  ) {
+    this.isBrowser = isPlatformBrowser(platformId);
+  }
 
   ngOnInit(): void {
     this.loadHunt();
   }
 
   private loadHunt(): void {
+    if (!this.isBrowser) {
+      this.isLoading = false; // Prevent stuck loader on server
+      return;
+    }
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) {
       this.error = 'Invalid treasure hunt ID';
       this.isLoading = false;
+      this.cdr.detectChanges();
       return;
     }
 
@@ -360,11 +410,13 @@ export class TreasureHuntPlayComponent implements OnInit {
       next: (hunt) => {
         this.hunt = hunt;
         this.isLoading = false;
+        this.cdr.detectChanges();
         setTimeout(() => this.updateThreeMarkers(), 0);
       },
       error: (err) => {
         this.error = 'Failed to load hunt. It may have expired.';
         this.isLoading = false;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -434,14 +486,24 @@ export class TreasureHuntPlayComponent implements OnInit {
     // Show only unlocked markers (or current one)
     for (let i = 0; i < this.currentStep - 1; i++) {
       const p = this.hunt.steps[i].position;
-      markers.push({ id: `clue-${i}`, type: 'clue', position: new THREE.Vector3(p.x, p.y, p.z) });
+      markers.push({
+        id: `clue-${i}`,
+        type: 'clue',
+        position: new THREE.Vector3(p.x, p.y, p.z),
+        number: i + 1
+      });
     }
 
     // Show current target
     if (this.currentStep <= this.hunt.steps.length) {
       const p = this.hunt.steps[this.currentStep - 1].position;
       const currentMarkerPosition = new THREE.Vector3(p.x, p.y, p.z);
-      markers.push({ id: `current`, type: 'clue', position: currentMarkerPosition });
+      markers.push({
+        id: `current`,
+        type: 'clue',
+        position: currentMarkerPosition,
+        number: this.currentStep
+      });
       this.threeScene.setMarkers(markers);
       this.threeScene.focusOn(currentMarkerPosition);
     } else {

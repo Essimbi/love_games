@@ -18,13 +18,50 @@ export async function setupDatabase(): Promise<void> {
     // Enable foreign keys
     db.pragma('foreign_keys = ON');
 
+    // Initialize migrations table
+    db.exec(`
+      CREATE TABLE IF NOT EXISTS migrations (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT UNIQUE,
+        applied_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
     // Run migrations - read from relative path
     try {
-      const migrationPath = join(process.cwd(), 'src/server/database/migrations/001_initial_schema.sql');
-      const migrationSQL = readFileSync(migrationPath, 'utf-8');
-      db.exec(migrationSQL);
+      const migrationDir = join(process.cwd(), 'src/server/database/migrations');
+      const migrations = [
+        '001_initial_schema.sql',
+        '002_add_3d_navigation.sql'
+      ];
+
+      const appliedMigrations = db.prepare('SELECT name FROM migrations').all().map((m: any) => m.name);
+
+      for (const migration of migrations) {
+        if (!appliedMigrations.includes(migration)) {
+          const migrationPath = join(migrationDir, migration);
+          const migrationSQL = readFileSync(migrationPath, 'utf-8');
+
+          try {
+            db.transaction(() => {
+              db.exec(migrationSQL);
+              db.prepare('INSERT INTO migrations (name) VALUES (?)').run(migration);
+            })();
+            console.log(`✅ Applied migration: ${migration}`);
+          } catch (mError: any) {
+            if (mError.message?.includes('duplicate column name')) {
+              console.warn(`⏳ Migration ${migration} partially applied previously. Resolving...`);
+              db.prepare('INSERT INTO migrations (name) VALUES (?)').run(migration);
+            } else {
+              throw mError;
+            }
+          }
+        } else {
+          console.log(`⏩ Skipping migration: ${migration}`);
+        }
+      }
     } catch (error) {
-      console.error('Failed to read migration file:', error);
+      console.error('Failed to run migrations:', error);
       throw error;
     }
 

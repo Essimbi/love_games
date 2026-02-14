@@ -8,35 +8,38 @@ import { encrypt } from '../../../../shared/utils/encryption.utils';
 import { LucideAngularModule } from 'lucide-angular';
 import * as THREE from 'three';
 
+import { ShareModalComponent } from '../../../../shared/components/share-modal/share-modal.component';
+import { ToastService } from '../../../../shared/services/toast.service';
+
 @Component({
   selector: 'app-treasure-hunt-create',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, ThreeSceneComponent, LucideAngularModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, ThreeSceneComponent, LucideAngularModule, ShareModalComponent],
   template: `
     <div class="hunt-create-container">
-      <div class="glass-card">
+      <div class="glass-card main-card">
         <header class="create-header">
           <div class="icon-badge">
             <lucide-icon [name]="'sparkles'" class="neon-pink"></lucide-icon>
           </div>
-          <h1>Midnight Hunt Creator</h1>
-          <p class="subtitle">Craft an enchanted 3D journey for your love</p>
+          <h1>Créateur de Parcours de Minuit</h1>
+          <p class="subtitle">Créez un voyage enchanté en 3D pour votre moitié</p>
         </header>
 
         <div class="wizard-steps">
           <div class="wizard-step" [class.active]="currentStep === 1">
             <span class="step-num">1</span>
-            <span class="step-label">The Vault</span>
+            <span class="step-label">Le Coffre</span>
           </div>
           <div class="line"></div>
           <div class="wizard-step" [class.active]="currentStep === 2">
             <span class="step-num">2</span>
-            <span class="step-label">3D World</span>
+            <span class="step-label">Monde 3D</span>
           </div>
           <div class="line"></div>
           <div class="wizard-step" [class.active]="currentStep === 3">
             <span class="step-num">3</span>
-            <span class="step-label">The Path</span>
+            <span class="step-label">Le Chemin</span>
           </div>
         </div>
 
@@ -44,14 +47,14 @@ import * as THREE from 'three';
           <!-- Step 1: Final Message & Map -->
           <div *ngIf="currentStep === 1" class="step-content fade-in">
             <section class="form-section">
-              <h3><lucide-icon [name]="'lock'" class="inline-icon"></lucide-icon> The Secret Vault</h3>
-              <p class="section-desc">The message hidden at the end of the journey.</p>
+              <h3><lucide-icon [name]="'lock'" class="inline-icon"></lucide-icon> Le Coffre Secret</h3>
+              <p class="section-desc">Le message caché qui sera révélé à la fin de l'aventure.</p>
               
               <div class="form-group">
-                <label>Final Message (Encrypted)</label>
+                <label>Message Final (Chiffré de bout en bout)</label>
                 <textarea
                   formControlName="finalMessage"
-                  placeholder="The message revealed at the end..."
+                  placeholder="Le message qui apparaîtra à la fin..."
                   rows="4"
                   class="midnight-input"
                 ></textarea>
@@ -60,23 +63,27 @@ import * as THREE from 'three';
             </section>
 
             <section class="form-section">
-              <h3><lucide-icon [name]="'map'" class="inline-icon"></lucide-icon> Select Your World</h3>
+              <h3><lucide-icon [name]="'map'" class="inline-icon"></lucide-icon> Choisissez votre Monde</h3>
               <div class="map-grid">
                 <div 
                   class="map-card" 
                   [class.selected]="form.get('mapId')?.value === 'midnight-city'"
                   (click)="form.patchValue({mapId: 'midnight-city'})"
                 >
-                  <div class="map-preview neon-pink-border"></div>
-                  <span>Midnight City</span>
+                  <div class="map-preview midnight-city-bg neon-pink-border">
+                    <div class="overlay"></div>
+                  </div>
+                  <span>Ville de Minuit</span>
                 </div>
                 <div 
                   class="map-card" 
                   [class.selected]="form.get('mapId')?.value === 'crystal-garden'"
                   (click)="form.patchValue({mapId: 'crystal-garden'})"
                 >
-                  <div class="map-preview neon-blue-border"></div>
-                  <span>Crystal Garden</span>
+                  <div class="map-preview crystal-garden-bg neon-blue-border">
+                    <div class="overlay"></div>
+                  </div>
+                  <span>Jardin de Cristal</span>
                 </div>
               </div>
             </section>
@@ -85,8 +92,8 @@ import * as THREE from 'three';
           <!-- Step 2: 3D Placement -->
           <div *ngIf="currentStep === 2" class="step-content fade-in">
             <section class="form-section">
-              <h3><lucide-icon [name]="'compass'" class="inline-icon"></lucide-icon> 3D Placement</h3>
-              <p class="section-desc">Click on the map to set the Treasure and Clue positions.</p>
+              <h3><lucide-icon [name]="'compass'" class="inline-icon"></lucide-icon> Placement 3D</h3>
+              <p class="section-desc">Cliquez sur la carte pour définir les positions du Trésor et des Indices.</p>
               
               <div class="three-wrapper">
                 <app-three-scene 
@@ -94,14 +101,14 @@ import * as THREE from 'three';
                   (markerAdded)="onPointAdded($event)"
                 ></app-three-scene>
                 <div class="three-legend">
-                  <span class="legend-item"><span class="dot treasure"></span> Treasure</span>
-                  <span class="legend-item"><span class="dot clue"></span> Clue</span>
+                  <span class="legend-item"><span class="dot treasure"></span> Trésor</span>
+                  <span class="legend-item"><span class="dot clue"></span> Indice</span>
                 </div>
               </div>
 
               <div class="placement-status">
-                <p *ngIf="!hasTreasure" class="warning">⚠️ Place the Treasure first (Golden Dot)</p>
-                <p *ngIf="hasTreasure">✅ Treasure placed. Now place {{3 - steps.length}} more clues.</p>
+                <p *ngIf="!hasTreasure" class="warning">⚠️ Placez le Trésor d'abord (Point Doré)</p>
+                <p *ngIf="hasTreasure">✅ Trésor placé. Placez encore {{3 - steps.length}} indices.</p>
               </div>
             </section>
           </div>
@@ -109,9 +116,9 @@ import * as THREE from 'three';
           <!-- Step 3: Riddles -->
           <div *ngIf="currentStep === 3" class="step-content fade-in">
              <div formArrayName="steps">
-              <div *ngFor="let step of steps.controls; let i = index" class="clue-card glass-card">
+              <div *ngFor="let step of steps.controls; let i = index" class="clue-card glass-card luxury-card">
                 <div class="clue-header">
-                  <h4>Clue #{{ i + 1 }}</h4>
+                  <h4>Indice #{{ i + 1 }}</h4>
                   <button type="button" (click)="removeStep(i)" class="btn-icon delete">
                     <lucide-icon [name]="'trash2'"></lucide-icon>
                   </button>
@@ -119,24 +126,24 @@ import * as THREE from 'three';
 
                 <div [formGroupName]="i">
                   <div class="form-group">
-                    <label>Riddle Title</label>
-                    <input type="text" formControlName="title" placeholder="e.g., Where we first met" class="midnight-input">
+                    <label>Titre de l'Énigme</label>
+                    <input type="text" formControlName="title" placeholder="ex: Là où nous nous sommes rencontrés" class="midnight-input">
                   </div>
                   <div class="form-group">
-                    <label>The Riddle</label>
-                    <textarea formControlName="description" rows="2" class="midnight-input" placeholder="Enter your riddle here..."></textarea>
+                    <label>L'Énigme</label>
+                    <textarea formControlName="description" rows="2" class="midnight-input" placeholder="Entrez votre énigme ici..."></textarea>
                   </div>
                   <div class="form-row">
                     <div class="form-group">
-                      <label>Correct Answer</label>
+                      <label>Bonne Réponse</label>
                       <input type="text" formControlName="correctAnswer" class="midnight-input">
                     </div>
                     <div class="form-group">
                       <label>Type</label>
                       <select formControlName="answerType" class="midnight-input">
-                        <option value="text">Text</option>
-                        <option value="number">Number</option>
-                        <option value="mcq">Choice</option>
+                        <option value="text">Texte</option>
+                        <option value="number">Nombre</option>
+                        <option value="mcq">Choix</option>
                       </select>
                     </div>
                   </div>
@@ -153,7 +160,7 @@ import * as THREE from 'three';
               (click)="prevStep()" 
               *ngIf="currentStep > 1"
             >
-              <lucide-icon [name]="'chevron-left'"></lucide-icon> Back
+              <lucide-icon [name]="'chevron-left'"></lucide-icon> Retour
             </button>
             
             <button 
@@ -163,17 +170,17 @@ import * as THREE from 'three';
               *ngIf="currentStep < 3"
               [disabled]="currentStep === 2 && (!hasTreasure || steps.length < 3)"
             >
-              Next <lucide-icon [name]="'chevron-right'"></lucide-icon>
+              Suivant <lucide-icon [name]="'chevron-right'"></lucide-icon>
             </button>
-
+ 
             <button 
               type="submit" 
               class="btn-primary glow-btn" 
               *ngIf="currentStep === 3"
               [disabled]="!form.valid || isLoading"
             >
-              <span *ngIf="!isLoading">Summon the Hunt ✨</span>
-              <span *ngIf="isLoading">Casting Spell...</span>
+              <span *ngIf="!isLoading">Invoquer le Parcours ✨</span>
+              <span *ngIf="isLoading">Lancement du Sort...</span>
             </button>
           </div>
         </form>
@@ -182,6 +189,12 @@ import * as THREE from 'three';
           {{ error }}
         </div>
       </div>
+      <!-- Share Modal -->
+      <app-share-modal
+        [isOpen]="isShareModalOpen"
+        [shareUrl]="shareUrl"
+        (close)="onShareModalClose()"
+      ></app-share-modal>
     </div>
   `,
   styles: [`
@@ -195,14 +208,31 @@ import * as THREE from 'three';
     }
 
     .glass-card {
-      background: rgba(255, 255, 255, 0.03);
-      backdrop-filter: blur(12px);
+      background: rgba(15, 5, 25, 0.4);
+      backdrop-filter: blur(20px) saturate(180%);
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 24px;
       padding: 2.5rem;
       width: 100%;
       max-width: 700px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(255, 0, 85, 0.05);
+    }
+
+    .main-card {
+        border: 1px solid rgba(255, 0, 85, 0.2);
+        box-shadow: 0 0 60px rgba(255, 0, 85, 0.1);
+    }
+
+    .luxury-card {
+        background: rgba(20, 10, 30, 0.6);
+        border: 1px solid rgba(255, 0, 85, 0.15);
+        margin-bottom: 2rem;
+        transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .luxury-card:hover {
+        transform: scale(1.02);
+        border-color: rgba(255, 0, 85, 0.4);
     }
 
     .create-header {
@@ -334,12 +364,36 @@ import * as THREE from 'three';
       background: #111;
       border-radius: 12px;
       margin-bottom: 0.75rem;
-      border: 2px solid transparent;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
+
+    .map-preview .overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(10, 5, 20, 0.5);
+        transition: background 0.4s;
+    }
+
+    .map-card:hover .map-preview .overlay {
+        background: rgba(10, 5, 20, 0.2);
+    }
+
+    .midnight-city-bg { background-image: url('/assets/treasure-hunt/midnight-city.png'); }
+    .crystal-garden-bg { background-image: url('/assets/treasure-hunt/crystal-garden.png'); }
 
     .map-card.selected .map-preview {
       border-color: #FF0055;
-      box-shadow: 0 0 20px rgba(255, 0, 85, 0.3);
+      box-shadow: 0 0 30px rgba(255, 0, 85, 0.4);
+      transform: translateY(-5px) scale(1.02);
+    }
+
+    .map-card.selected .map-preview .overlay {
+        background: rgba(255, 0, 85, 0.05);
     }
 
     .three-wrapper {
@@ -439,12 +493,16 @@ export class TreasureHuntCreateComponent implements OnInit {
   error = '';
   hasTreasure = false;
 
+  isShareModalOpen = false;
+  shareUrl = '';
+
   @ViewChild(ThreeSceneComponent) threeScene!: ThreeSceneComponent;
 
   constructor(
     private fb: FormBuilder,
     private treasureHuntService: TreasureHuntService,
-    private router: Router
+    private router: Router,
+    private toastService: ToastService
   ) { }
 
   ngOnInit(): void {
@@ -470,10 +528,12 @@ export class TreasureHuntCreateComponent implements OnInit {
     if (!this.hasTreasure) {
       this.form.patchValue({ treasurePosition: pos });
       this.hasTreasure = true;
-      // After treasure, add the first level of steps
-    } else if (this.steps.length < 5) {
+    } else {
       this.addStep(pos);
     }
+
+    // Crucial: immediately update the 3D scene to show the new marker
+    this.updateThreeMarkers();
   }
 
   addStep(position: Position3D): void {
@@ -543,7 +603,14 @@ export class TreasureHuntCreateComponent implements OnInit {
 
       this.treasureHuntService.createHunt(request).subscribe({
         next: (response) => {
-          this.router.navigate(['/treasure-hunt', response.id]);
+          this.isLoading = false;
+          // Construct the game URL
+          const baseUrl = window.location.origin;
+          this.shareUrl = `${baseUrl}/treasure-hunt/play/${response.id}`;
+
+          // Show toast and open modal
+          this.toastService.success('Votre Chasse au Trésor a été invoquée avec succès ! ✨');
+          this.isShareModalOpen = true;
         },
         error: (err) => {
           this.error = err.error?.message || 'Failed to create treasure hunt';
@@ -554,5 +621,11 @@ export class TreasureHuntCreateComponent implements OnInit {
       this.error = 'Encryption failed. Please try again.';
       this.isLoading = false;
     }
+  }
+
+  onShareModalClose(): void {
+    this.isShareModalOpen = false;
+    // Optionally navigate to dashboard or detail page
+    // For now, staying on page is fine as modal is closed
   }
 }

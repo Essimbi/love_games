@@ -1,5 +1,5 @@
-import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, ElementRef, EventEmitter, Inject, Input, OnDestroy, OnInit, Output, PLATFORM_ID, ViewChild } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
@@ -76,18 +76,29 @@ export class ThreeSceneComponent implements OnInit, OnDestroy {
     private mouse = new THREE.Vector2();
 
     loading = true;
+    private isBrowser: boolean;
     private markerMeshes: THREE.Mesh[] = [];
     private mapObject!: THREE.Group;
 
+    constructor(@Inject(PLATFORM_ID) platformId: Object) {
+        this.isBrowser = isPlatformBrowser(platformId);
+    }
+
     ngOnInit(): void {
+        if (!this.isBrowser) return;
         this.initScene();
         this.loadMap();
         this.animate();
     }
 
     ngOnDestroy(): void {
-        cancelAnimationFrame(this.animationId);
-        this.renderer.dispose();
+        if (!this.isBrowser) return;
+        if (this.animationId) {
+            cancelAnimationFrame(this.animationId);
+        }
+        if (this.renderer) {
+            this.renderer.dispose();
+        }
     }
 
     private initScene(): void {
@@ -120,6 +131,9 @@ export class ThreeSceneComponent implements OnInit, OnDestroy {
         const pointLight = new THREE.PointLight(0xFF0055, 1);
         pointLight.position.set(5, 5, 5);
         this.scene.add(pointLight);
+
+        this.addStarField();
+        this.addParticles();
 
         if (this.mode === 'create') {
             this.renderer.domElement.addEventListener('click', this.onMouseClick.bind(this));
@@ -164,37 +178,94 @@ export class ThreeSceneComponent implements OnInit, OnDestroy {
         this.mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 
         this.raycaster.setFromCamera(this.mouse, this.camera);
+        // Intersect with the platform/map but NOT the markers themselves to prevent stacking on markers
         const intersects = this.raycaster.intersectObjects(this.mapObject.children);
 
         if (intersects.length > 0) {
             const point = intersects[0].point;
             this.markerAdded.emit(point);
-            this.addMarkerMesh(point, 'clue');
+            // We NO LONGER call addMarkerMesh here directly. 
+            // The parent will call setMarkers which will update everything correctly.
         }
     }
 
-    private addMarkerMesh(position: THREE.Vector3, type: 'clue' | 'treasure'): void {
+    private createLabelCanvas(text: string, color: string): THREE.CanvasTexture | null {
+        if (!this.isBrowser) return null;
+        const canvas = document.createElement('canvas');
+        canvas.width = 64;
+        canvas.height = 64;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+            ctx.fillStyle = color;
+            ctx.font = 'bold 40px Inter, Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(text, 32, 32);
+        }
+        const texture = new THREE.CanvasTexture(canvas);
+        return texture;
+    }
+
+    private addMarkerMesh(position: THREE.Vector3, type: 'clue' | 'treasure', labelNumber?: number): void {
+        const group = new THREE.Group();
+        group.position.copy(position);
+        group.position.y += 0.2; // Platform height offset
+
+        // Sphere
         const geom = new THREE.SphereGeometry(0.2, 16, 16);
+        const color = type === 'clue' ? 0x00ffcc : 0xffd700;
         const mat = new THREE.MeshPhongMaterial({
-            color: type === 'clue' ? 0x00ffcc : 0xffd700,
-            emissive: type === 'clue' ? 0x00ffcc : 0xffd700,
-            emissiveIntensity: 0.5
+            color: color,
+            emissive: color,
+            emissiveIntensity: 0.5,
+            transparent: true,
+            opacity: 0.9
         });
         const mesh = new THREE.Mesh(geom, mat);
-        mesh.position.copy(position);
-        mesh.position.y += 0.2;
-        this.scene.add(mesh);
-        this.markerMeshes.push(mesh);
+        group.add(mesh);
 
-        // Add a small light to the marker
-        const light = new THREE.PointLight(mat.color, 0.5, 2);
-        light.position.copy(mesh.position);
-        this.scene.add(light);
+        // Label (Sprite)
+        const labelText = type === 'treasure' ? '★' : (labelNumber ? labelNumber.toString() : '');
+        if (labelText && this.isBrowser) {
+            const texture = this.createLabelCanvas(labelText, type === 'clue' ? '#00ffcc' : '#ffd700');
+            if (texture) {
+                const labelMat = new THREE.SpriteMaterial({
+                    map: texture,
+                    transparent: true
+                });
+                const sprite = new THREE.Sprite(labelMat);
+                sprite.scale.set(0.6, 0.6, 0.6);
+                sprite.position.y = 0.5;
+                group.add(sprite);
+            }
+        }
+
+        // Light
+        const light = new THREE.PointLight(color, 0.6, 3);
+        light.position.y = 0.2;
+        group.add(light);
+
+        this.scene.add(group);
+        this.markerMeshes.push(group as any); // Storing as Mesh for compatibility with current clearMarkers
     }
 
     private animate(): void {
         this.animationId = requestAnimationFrame(this.animate.bind(this));
         this.controls.update();
+
+        // Rotate starfield
+        const stars = this.scene.getObjectByName('starField');
+        if (stars) stars.rotation.y += 0.0001;
+
+        // Animate particles
+        const particles = this.scene.getObjectByName('stardust');
+        if (particles) {
+            const positions = (particles as THREE.Points).geometry.attributes['position'].array as Float32Array;
+            for (let i = 0; i < positions.length; i += 3) {
+                positions[i + 1] += Math.sin(Date.now() * 0.001 + i) * 0.002;
+            }
+            (particles as THREE.Points).geometry.attributes['position'].needsUpdate = true;
+        }
 
         // Animate markers
         const time = this.clock.getElapsedTime();
@@ -205,17 +276,62 @@ export class ThreeSceneComponent implements OnInit, OnDestroy {
         this.renderer.render(this.scene, this.camera);
     }
 
+    private addStarField(): void {
+        const starGeometry = new THREE.BufferGeometry();
+        const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.1 });
+
+        const starVertices = [];
+        for (let i = 0; i < 5000; i++) {
+            const x = (Math.random() - 0.5) * 1000;
+            const y = (Math.random() - 0.5) * 1000;
+            const z = (Math.random() - 0.5) * 1000;
+            starVertices.push(x, y, z);
+        }
+
+        starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+        const stars = new THREE.Points(starGeometry, starMaterial);
+        stars.name = 'starField';
+        this.scene.add(stars);
+    }
+
+    private addParticles(): void {
+        const pGeometry = new THREE.BufferGeometry();
+        const pMaterial = new THREE.PointsMaterial({
+            color: 0x00ffcc,
+            size: 0.05,
+            transparent: true,
+            opacity: 0.6,
+            blending: THREE.AdditiveBlending
+        });
+
+        const pVertices = [];
+        for (let i = 0; i < 300; i++) {
+            const x = (Math.random() - 0.5) * 20;
+            const y = Math.random() * 10;
+            const z = (Math.random() - 0.5) * 20;
+            pVertices.push(x, y, z);
+        }
+
+        pGeometry.setAttribute('position', new THREE.Float32BufferAttribute(pVertices, 3));
+        const particles = new THREE.Points(pGeometry, pMaterial);
+        particles.name = 'stardust';
+        this.scene.add(particles);
+    }
+
     public clearMarkers(): void {
+        if (!this.isBrowser) return;
         this.markerMeshes.forEach(m => this.scene.remove(m));
         this.markerMeshes = [];
     }
 
     public setMarkers(markers: Marker[]): void {
+        if (!this.isBrowser) return;
         this.clearMarkers();
-        markers.forEach(m => this.addMarkerMesh(m.position, m.type));
+        markers.forEach(m => this.addMarkerMesh(m.position, m.type, m.number));
     }
 
     public focusOn(position: THREE.Vector3): void {
+        if (!this.isBrowser) return;
         const target = position.clone();
         target.y += 2;
         this.camera.position.lerp(target.add(new THREE.Vector3(2, 2, 2)), 0.1);

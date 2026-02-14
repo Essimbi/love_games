@@ -12,7 +12,7 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withInMemoryScrolling({ scrollPositionRestoration: 'top', anchorScrolling: 'enabled' })),
     provideClientHydration(),
-    provideHttpClient(withInterceptorsFromDi()),
+    provideHttpClient(withFetch(), withInterceptorsFromDi()),
     provideAnimationsAsync(),
     importProvidersFrom(LucideAngularModule.pick({ Sparkles, Lock, Compass, ChevronLeft, ChevronRight, Trash2, Map }))
   ]

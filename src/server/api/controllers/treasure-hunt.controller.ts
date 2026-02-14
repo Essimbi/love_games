@@ -11,53 +11,53 @@ export class TreasureHuntController {
     try {
       const data: CreateTreasureHuntDto = req.body;
       const db = getDatabase();
-      
+
       const huntId = generateGameId();
       const now = new Date().toISOString();
-      
+
       // Insert hunt
       const huntStmt = db.prepare(`
-        INSERT INTO treasure_hunts (id, final_message, final_gps_lat, final_gps_lng, created_at)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO treasure_hunts (id, final_message, map_id, treasure_x, treasure_y, treasure_z, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
       `);
-      
+
       huntStmt.run(
         huntId,
         data.finalMessage,
-        data.finalGpsLat || null,
-        data.finalGpsLng || null,
+        data.mapId,
+        data.treasurePosition.x,
+        data.treasurePosition.y,
+        data.treasurePosition.z,
         now
       );
-      
+
       // Insert steps
       const stepStmt = db.prepare(`
         INSERT INTO treasure_steps (
-          hunt_id, step_number, title, description, hint_1, hint_2,
-          answer_type, correct_answer, success_message, error_message, image_url
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          hunt_id, step_number, title, description,
+          answer_type, correct_answer, pos_x, pos_y, pos_z
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
       `);
-      
-      data.steps.forEach(step => {
+
+      data.steps.forEach((step, index) => {
         stepStmt.run(
           huntId,
-          step.stepNumber,
+          index + 1, // Ensure sequential step numbers
           step.title,
           step.description,
-          step.hint1 || null,
-          step.hint2 || null,
           step.answerType,
           step.correctAnswer,
-          step.successMessage || null,
-          step.errorMessage || null,
-          step.imageUrl || null
+          step.position.x,
+          step.position.y,
+          step.position.z
         );
       });
-      
+
       res.status(201).json({
         id: huntId,
         finalMessage: data.finalMessage,
-        finalGpsLat: data.finalGpsLat || null,
-        finalGpsLng: data.finalGpsLng || null,
+        mapId: data.mapId,
+        treasurePosition: data.treasurePosition,
         createdAt: now
       });
     } catch (error) {
@@ -70,7 +70,7 @@ export class TreasureHuntController {
       });
     }
   }
-  
+
   /**
    * Get a treasure hunt
    */
@@ -78,12 +78,12 @@ export class TreasureHuntController {
     try {
       const { id } = req.params;
       const db = getDatabase();
-      
+
       // Get hunt
       const hunt = db.prepare(`
         SELECT * FROM treasure_hunts WHERE id = ?
       `).get(id) as any;
-      
+
       if (!hunt) {
         res.status(404).json({
           error: 'Not Found',
@@ -93,28 +93,33 @@ export class TreasureHuntController {
         });
         return;
       }
-      
+
       // Get steps
       const steps = db.prepare(`
         SELECT * FROM treasure_steps WHERE hunt_id = ? ORDER BY step_number
-      `).all() as any[];
-      
+      `).all(id) as any[];
+
       res.json({
         id: hunt.id,
         finalMessage: hunt.final_message,
-        finalGpsLat: hunt.final_gps_lat,
-        finalGpsLng: hunt.final_gps_lng,
+        mapId: hunt.map_id,
+        treasurePosition: {
+          x: hunt.treasure_x,
+          y: hunt.treasure_y,
+          z: hunt.treasure_z
+        },
         steps: steps.map(step => ({
           id: step.id,
           stepNumber: step.step_number,
           title: step.title,
           description: step.description,
-          hint1: step.hint_1,
-          hint2: step.hint_2,
           answerType: step.answer_type,
-          successMessage: step.success_message,
-          errorMessage: step.error_message,
-          imageUrl: step.image_url
+          correctAnswer: step.correct_answer,
+          position: {
+            x: step.pos_x,
+            y: step.pos_y,
+            z: step.pos_z
+          }
         })),
         createdAt: hunt.created_at
       });
@@ -128,7 +133,7 @@ export class TreasureHuntController {
       });
     }
   }
-  
+
   /**
    * Validate a step answer
    */
@@ -137,14 +142,14 @@ export class TreasureHuntController {
       const { id, stepNumber } = req.params;
       const data: ValidateStepDto = req.body;
       const db = getDatabase();
-      
+
       const stepNum = parseInt(stepNumber as string);
-      
+
       // Get step
       const step = db.prepare(`
         SELECT * FROM treasure_steps WHERE hunt_id = ? AND step_number = ?
       `).get(id, stepNum) as any;
-      
+
       if (!step) {
         res.status(404).json({
           error: 'Not Found',
@@ -154,10 +159,10 @@ export class TreasureHuntController {
         });
         return;
       }
-      
+
       // Validate answer
       const isCorrect = data.answer.toLowerCase().trim() === step.correct_answer.toLowerCase().trim();
-      
+
       res.json({
         isCorrect,
         message: isCorrect ? step.success_message : step.error_message,
@@ -173,7 +178,7 @@ export class TreasureHuntController {
       });
     }
   }
-  
+
   /**
    * Get hunt progress
    */
@@ -182,7 +187,7 @@ export class TreasureHuntController {
       const { id } = req.params;
       const sessionId = req.query['sessionId'] as string;
       const db = getDatabase();
-      
+
       if (!sessionId) {
         res.status(400).json({
           error: 'Bad Request',
@@ -192,21 +197,21 @@ export class TreasureHuntController {
         });
         return;
       }
-      
+
       // Get or create progress
       let progress = db.prepare(`
         SELECT * FROM treasure_progress WHERE hunt_id = ? AND session_id = ?
       `).get(id, sessionId) as any;
-      
+
       if (!progress) {
         const progressId = generateGameId();
         const now = new Date().toISOString();
-        
+
         db.prepare(`
           INSERT INTO treasure_progress (hunt_id, session_id, current_step, started_at)
           VALUES (?, ?, ?, ?)
         `).run(id, sessionId, 1, now);
-        
+
         progress = {
           hunt_id: id,
           session_id: sessionId,
@@ -216,7 +221,7 @@ export class TreasureHuntController {
           completed_at: null
         };
       }
-      
+
       res.json({
         currentStep: progress.current_step,
         hintsUsed: JSON.parse(progress.hints_used || '[]'),
