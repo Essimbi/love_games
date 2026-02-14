@@ -24,7 +24,7 @@ import { LucideAngularModule, Heart } from 'lucide-angular';
             <ul>
               <li><a routerLink="/secret-message/create">Messages Cryptés</a></li>
               <li><a routerLink="/memory/create">Memory Photos</a></li>
-              <!-- <li><a routerLink="/treasure-hunt">Parcours Surprise</a></li> -->
+              <li><a routerLink="/treasure-hunt/create">Parcours Surprise</a></li>
               <li><a routerLink="/love-wheel/create">Roue de l'Amour</a></li>
             </ul>
           </div>

@@ -40,10 +40,10 @@ import { filter } from 'rxjs/operators';
             <span>Memory</span>
             <div class="underline"></div>
           </a>
-          <!-- <a routerLink="/treasure-hunt" class="nav-link" routerLinkActive="active">
+          <a routerLink="/treasure-hunt/create" class="nav-link" routerLinkActive="active">
             <span>Parcours</span>
             <div class="underline"></div>
-          </a> -->
+          </a>
           <a routerLink="/love-wheel/create" class="nav-link" routerLinkActive="active">
             <span>Roue</span>
             <div class="underline"></div>
@@ -71,7 +71,7 @@ import { filter } from 'rxjs/operators';
         <nav class="mobile-nav">
           <a routerLink="/secret-message/create" (click)="isMenuOpen = false">Messages</a>
           <a routerLink="/memory/create" (click)="isMenuOpen = false">Memory</a>
-          <!-- <a routerLink="/treasure-hunt" (click)="isMenuOpen = false">Parcours</a> -->
+          <a routerLink="/treasure-hunt/create" (click)="isMenuOpen = false">Parcours</a>
           <a routerLink="/love-wheel/create" (click)="isMenuOpen = false">Roue</a>
           <hr>
           <a routerLink="/secret-message/create" class="btn-primary" (click)="isMenuOpen = false">Créer ma surprise</a>

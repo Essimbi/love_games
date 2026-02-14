@@ -1,10 +1,11 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { ApplicationConfig, provideBrowserGlobalErrorListeners, importProvidersFrom } from '@angular/core';
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
 import { provideHttpClient, withFetch, withInterceptorsFromDi } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 import { routes } from './app.routes';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
+import { LucideAngularModule, Sparkles, Lock, Compass, ChevronLeft, ChevronRight, Trash2, Map } from 'lucide-angular';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -12,6 +13,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withInMemoryScrolling({ scrollPositionRestoration: 'top', anchorScrolling: 'enabled' })),
     provideClientHydration(),
     provideHttpClient(withInterceptorsFromDi()),
-    provideAnimationsAsync()
+    provideAnimationsAsync(),
+    importProvidersFrom(LucideAngularModule.pick({ Sparkles, Lock, Compass, ChevronLeft, ChevronRight, Trash2, Map }))
   ]
 };
